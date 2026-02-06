@@ -1,0 +1,14 @@
+services:
+  postgres: 
+    image: postgres:17.0-alpine3.20
+    ports: 
+      - "${POSTGRES_PORT}:5432" 
+    environment: 
+      POSTGRES_USER: ${POSTGRES_DOCKER_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_DOCKER_ROOT_PASSWORD}
+      POSTGRES_DB: "db_${APP_NAME}"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      
+volumes:
+  postgres_data:
