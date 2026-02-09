@@ -4,13 +4,14 @@ import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { UsersModule } from './users/users.module';
+import { UsersController } from './users/users.controller';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
     }),
-    
+
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => ({
@@ -20,13 +21,14 @@ import { UsersModule } from './users/users.module';
         username: configService.get('POSTGRES_DOCKER_USER'),
         password: configService.get('POSTGRES_DOCKER_ROOT_PASSWORD'),
         database: `db_${configService.get('APP_NAME')}`,
-        //loads entities
         autoLoadEntities: true,
         //when changes in Entities are made, all tables are created as new
         synchronize: true
       }),
       inject: [ConfigService]
-    })
+    }),
+
+    UsersModule
   ],
   controllers: [AppController],
   providers: [AppService],
