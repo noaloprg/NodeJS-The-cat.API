@@ -7,7 +7,7 @@ export class User {
     @PrimaryGeneratedColumn()
     id: number
 
-    @Column({ length: 150 })
+    @Column({ length: 150, unique: true })
     mail: string
 
     @Column({ length: 50, nullable: true })
@@ -28,7 +28,6 @@ export class User {
     @UpdateDateColumn()
     updatedAt: Date
 
-    //may not be deleted
     @DeleteDateColumn({ nullable: true })
     deletedAt: Date
 }
