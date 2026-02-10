@@ -1,17 +1,6 @@
 import { IsEmail, IsOptional, IsString, Max } from "class-validator";
+import { CreateUserDto } from "./create-user.dto";
 
-export class UpdateUserDto {
-    @IsEmail()
-    @Max(150)
-    email: string
-    
-    @IsString()
-    @IsOptional()
-    @Max(50)
-    nombre?: string
-
-    @IsString()
-    @IsOptional()
-    @Max(50)
-    password?: string
+export class UpdateUserDto extends CreateUserDto {
+  
 }
