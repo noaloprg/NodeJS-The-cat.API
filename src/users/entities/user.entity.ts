@@ -11,10 +11,10 @@ export class User {
     mail: string
 
     @Column({ length: 50, nullable: true })
-    name?: string
+    name?: string | null
 
     @Column({ nullable: true })
-    password?: string
+    password?: string | null
 
     @Column({ type: 'enum' })
     role: UserType
@@ -29,5 +29,5 @@ export class User {
     updatedAt: Date
 
     @DeleteDateColumn({ nullable: true })
-    deletedAt?: Date
+    deletedAt?: Date | null
 }
