@@ -10,24 +10,24 @@ export class User {
     @Column({ length: 150, unique: true })
     mail: string
 
-    @Column({ length: 50, nullable: true })
+    @Column({ type: 'varchar', length: 50, nullable: true })
     name?: string | null
 
-    @Column({ nullable: true })
+    @Column({ type: 'varchar', nullable: true })
     password?: string | null
 
-    @Column({ type: 'enum' })
+    @Column({ type: 'enum' , enum: UserType})
     role: UserType
 
-    @Column({ type: 'enum' })
+    @Column({ type: 'enum', enum: UserLanguage })
     language: UserLanguage
 
-    @CreateDateColumn()
+    @CreateDateColumn({ type: 'timestamptz' })
     createdAt: Date
 
-    @UpdateDateColumn()
+    @UpdateDateColumn({ type: 'timestamptz' })
     updatedAt: Date
 
-    @DeleteDateColumn({ nullable: true })
+    @DeleteDateColumn({ type: 'timestamptz', nullable: true })
     deletedAt?: Date | null
 }
