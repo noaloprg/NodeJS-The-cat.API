@@ -1,5 +1,5 @@
 import { Column, CreateDateColumn, DeleteDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
-import { TipeUser } from "../enums/User-role.enum";
+import { UserType } from "../enums/User-role.enum";
 import { UserLanguage } from "../enums/User-language.enum";
 
 @Entity()
@@ -17,7 +17,7 @@ export class User {
     password: string
 
     @Column({ type: 'enum' })
-    role: TipeUser
+    role: UserType
 
     @Column({ type: 'enum' })
     language: UserLanguage
