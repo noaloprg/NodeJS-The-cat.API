@@ -1,4 +1,4 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -29,15 +29,33 @@ export class UsersService {
     return usersArray.map(user => UserMapper.toResponseDTO(user))
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  async findOne(idUser: number) {
+    const user = await this.repository.findOneBy({ id: idUser })
+
+    if (!user) throw new NotFoundException(this.notFoundMessage(idUser));
+
+    return UserMapper.toResponseDTO(user)
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  async update(idUser: number, updateUserDto: UpdateUserDto) {
+    const userRequested = await this.repository.findOneBy({ id: idUser })
+
+    if (!userRequested) throw new NotFoundException(this.notFoundMessage(idUser));
+    const userUpdated = UserMapper.updateUserFromDTO(userRequested, updateUserDto)
+
+    const saved = await this.repository.save(userUpdated)
+    return UserMapper.toResponseDTO(saved)
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  async remove(idUser: number) {
+    const userRequested = await this.repository.findOneBy({ id: idUser })
+    if (!userRequested) throw new NotFoundException(this.notFoundMessage(idUser));
+
+    return
+  }
+
+  private notFoundMessage(id: number) {
+    return `User with id ${id} was not founded`
+
   }
 }

@@ -21,7 +21,7 @@ export class UserSeeder implements Seeder {
         return this.UserRepository.save(admin)
     }
     drop(): Promise<any> {
-        return new Error('Method not implemented')
+        throw new Error('Method not implemented')
         //return this.UserRepository.query('TRUNCATE TABLE "user" RESTART IDENTITY CASCADE')
     }
 
