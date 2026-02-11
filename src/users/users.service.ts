@@ -1,10 +1,11 @@
-import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import { ConflictException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
 import { UserMapper } from 'src/mappers/user.mapper';
+import { UserType } from './enums/User-role.enum';
 
 @Injectable()
 export class UsersService {
@@ -41,21 +42,28 @@ export class UsersService {
     const userRequested = await this.repository.findOneBy({ id: idUser })
 
     if (!userRequested) throw new NotFoundException(this.notFoundMessage(idUser));
+    //user with new update values
     const userUpdated = UserMapper.updateUserFromDTO(userRequested, updateUserDto)
 
+    //user with updatedDate updated
     const saved = await this.repository.save(userUpdated)
     return UserMapper.toResponseDTO(saved)
   }
 
   async remove(idUser: number) {
     const userRequested = await this.repository.findOneBy({ id: idUser })
+
     if (!userRequested) throw new NotFoundException(this.notFoundMessage(idUser));
 
-    return
+    //role validation for Delete
+    if (userRequested.role == UserType.ADMIN) throw new ForbiddenException(`Users with Admin role cannot be deleted`)
+
+    const userDeleted = await this.repository.softRemove(userRequested)
+
+    return UserMapper.toResponseDTO(userDeleted)
   }
 
   private notFoundMessage(id: number) {
     return `User with id ${id} was not founded`
-
   }
 }
