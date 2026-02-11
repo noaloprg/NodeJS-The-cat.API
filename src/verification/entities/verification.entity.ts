@@ -1,1 +1,37 @@
-export class Verification {}
+import { IsEmail, IsOptional, IsString } from "class-validator";
+import { UserLanguage } from "src/users/enums/User-language.enum";
+import { Column, CreateDateColumn, DeleteDateColumn, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+
+export class Verification {
+    @PrimaryGeneratedColumn()
+    id: number
+
+    @Column({ length: 150, unique: true })
+    @IsEmail()
+    targetEmail: string
+
+    @Column()
+    @IsString() 
+    verificationToken: string
+
+    @Column({ type: 'varchar', length: 50, nullable: true })
+    name?: string | null
+
+    @Column({ type: 'varchar', nullable: true })
+    password?: string | null
+
+    @Column({ type: 'enum', enum: UserLanguage, default: UserLanguage.ES })
+    language: UserLanguage
+
+    @Column({ type: 'date', nullable: true })
+    acceptedAt?: Date | null
+
+    @CreateDateColumn({ type: 'timestamptz' })
+    createdAt: Date
+
+    @UpdateDateColumn({ type: 'timestamptz' })
+    updatedAt: Date
+
+    @DeleteDateColumn({ type: 'timestamptz', nullable: true })
+    deletedAt?: Date | null
+}
