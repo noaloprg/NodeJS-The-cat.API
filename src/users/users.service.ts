@@ -5,7 +5,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
 import { UserMapper } from 'src/mappers/user.mapper';
-import { UserType } from './enums/User-role.enum';
 
 @Injectable()
 export class UsersService {
