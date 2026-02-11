@@ -16,10 +16,10 @@ export class User {
     @Column({ type: 'varchar', nullable: true })
     password?: string | null
 
-    @Column({ type: 'enum' , enum: UserType})
+    @Column({ type: 'enum', enum: UserType, default: UserType.USER })
     role: UserType
 
-    @Column({ type: 'enum', enum: UserLanguage })
+    @Column({ type: 'enum', enum: UserLanguage, default: UserLanguage.ES })
     language: UserLanguage
 
     @CreateDateColumn({ type: 'timestamptz' })
