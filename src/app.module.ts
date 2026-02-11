@@ -6,6 +6,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { UsersModule } from './users/users.module';
 import { UsersController } from './users/users.controller';
 import { VerificationModule } from './verification/verification.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -31,7 +32,9 @@ import { VerificationModule } from './verification/verification.module';
 
     UsersModule,
 
-    VerificationModule
+    VerificationModule,
+
+    AuthModule
   ],
   controllers: [AppController],
   providers: [AppService],
