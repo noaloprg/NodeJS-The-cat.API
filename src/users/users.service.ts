@@ -13,10 +13,12 @@ export class UsersService {
   @InjectRepository(User)
   private readonly repository: Repository<User>
 
+  constructor(private readonly userMapper: UserMapper) { }
+
   private readonly RESOURCE_NAME = 'User'
 
   async create(createUserDto: CreateUserDto) {
-    const tempUser = UserMapper.createUserFromDTO(createUserDto)
+    const tempUser = this.userMapper.createUserFromDTO(createUserDto)
 
     const userExist = await this.repository.exists({ where: { mail: tempUser.mail } })
 
@@ -25,12 +27,12 @@ export class UsersService {
     }
 
     const userCreated = await this.repository.save(tempUser)
-    return UserMapper.toResponseDTO(userCreated)
+    return this.userMapper.toResponseDTO(userCreated)
   }
 
   async findAll() {
     const usersArray = await this.repository.find()
-    return usersArray.map(user => UserMapper.toResponseDTO(user))
+    return usersArray.map(user => this.userMapper.toResponseDTO(user))
   }
 
   async findOne(idUser: number) {
@@ -38,7 +40,7 @@ export class UsersService {
 
     if (!user) throw new NotFoundException(ErrorMessages.notFoundByIdMessage(this.RESOURCE_NAME, idUser));
 
-    return UserMapper.toResponseDTO(user)
+    return this.userMapper.toResponseDTO(user)
   }
 
   async findOneByMail(mail: string) {
@@ -46,7 +48,7 @@ export class UsersService {
 
     if (!user) throw new NotFoundException(ErrorMessages.notFoundByStringMessage(this.RESOURCE_NAME, 'mail', mail));
 
-    return UserMapper.toResponseDTO(user)
+    return this.userMapper.toResponseDTO(user)
   }
 
   //gets user with password 
@@ -57,17 +59,17 @@ export class UsersService {
 
     return user
   }
-  
+
   async update(idUser: number, updateUserDto: UpdateUserDto) {
     const userRequested = await this.repository.findOneBy({ id: idUser })
 
     if (!userRequested) throw new NotFoundException(ErrorMessages.notFoundByIdMessage(this.RESOURCE_NAME, idUser));
     //user with new update values
-    const userUpdated = UserMapper.updateUserFromDTO(userRequested, updateUserDto)
+    const userUpdated = this.userMapper.updateUserFromDTO(userRequested, updateUserDto)
 
     //user with updatedDate updated
     const saved = await this.repository.save(userUpdated)
-    return UserMapper.toResponseDTO(saved)
+    return this.userMapper.toResponseDTO(saved)
   }
 
   async remove(idUser: number) {
@@ -80,6 +82,6 @@ export class UsersService {
 
     const userDeleted = await this.repository.softRemove(userRequested)
 
-    return UserMapper.toResponseDTO(userDeleted)
+    return this.userMapper.toResponseDTO(userDeleted)
   }
 }
