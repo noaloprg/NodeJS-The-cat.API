@@ -7,11 +7,9 @@ export class Verification {
     id: number
 
     @Column({ length: 150, unique: true })
-    @IsEmail()
     targetEmail: string
 
     @Column()
-    @IsString() 
     verificationToken: string
 
     @Column({ type: 'varchar', length: 50, nullable: true })
