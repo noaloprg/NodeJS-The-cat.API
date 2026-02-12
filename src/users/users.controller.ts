@@ -22,6 +22,12 @@ export class UsersController {
     return await this.usersService.findOne(id);
   }
 
+  @Get(':mail')
+  async findOneByMail(@Param('mail') mail: string) {
+    return await this.usersService.findOneByMail(mail)
+
+  }
+
   @Patch(':id')
   async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     return await this.usersService.update(+id, updateUserDto);

@@ -49,6 +49,15 @@ export class UsersService {
     return UserMapper.toResponseDTO(user)
   }
 
+  //gets user with password 
+  async getUserByMail(mail: string) {
+    const user = await this.repository.findOneBy({ mail: mail })
+
+    if (!user) throw new NotFoundException(ErrorMessages.notFoundByStringMessage(this.RESOURCE_NAME, 'mail', mail));
+
+    return user
+  }
+  
   async update(idUser: number, updateUserDto: UpdateUserDto) {
     const userRequested = await this.repository.findOneBy({ id: idUser })
 
