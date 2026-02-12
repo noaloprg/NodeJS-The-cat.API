@@ -3,14 +3,14 @@ import { IsEmail, IsString, MaxLength, MinLength } from "class-validator";
 
 export class LoginDTO {
     @ApiProperty({
-        example: 'user@gmail.com'
+        example: 'admin@admin.com'
     })
     @IsEmail()
     @MaxLength(150)
     mail: string
 
     @ApiProperty({
-        example: '12345678'
+        example: 'admin1234'
     })
     @IsString()
     @MinLength(8)
