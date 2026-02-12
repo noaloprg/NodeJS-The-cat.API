@@ -10,15 +10,16 @@ export class RolesGuard implements CanActivate {
     ) { }
 
     canActivate(context: ExecutionContext): boolean {
-        //obtains all decorators from the class and methods
+        //obtains the values of all decorators from the class and methods
         const requiredRoles =
             this.reflector.getAllAndOverride<UserType[]>(ROLES_KEY, [context.getHandler(), context.getClass()])
 
         if (!requiredRoles) return true;
 
-        //all info Httprequest 
+        //all info HttpRequest 
         const request = context.switchToHttp().getRequest()
-        //AuthGuard of user
+        
+        //user data from HttpRequest
         const userRequest = request.user;
 
         //role value verification
