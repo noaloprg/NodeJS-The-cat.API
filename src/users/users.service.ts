@@ -4,13 +4,16 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
-import { UserMapper } from 'src/mappers/user.mapper';
 import { UserType } from './enums/User-role.enum';
+import { UserMapper } from 'src/common/mappers/user.mapper';
+import { ErrorMessages as ErrorMessages } from 'src/common/constants/error-messages';
 
 @Injectable()
 export class UsersService {
   @InjectRepository(User)
   private readonly repository: Repository<User>
+
+  private readonly RESOURCE_NAME = 'User'
 
   async create(createUserDto: CreateUserDto) {
     const tempUser = UserMapper.createUserFromDTO(createUserDto)
@@ -33,7 +36,15 @@ export class UsersService {
   async findOne(idUser: number) {
     const user = await this.repository.findOneBy({ id: idUser })
 
-    if (!user) throw new NotFoundException(this.notFoundMessage(idUser));
+    if (!user) throw new NotFoundException(ErrorMessages.notFoundByIdMessage(this.RESOURCE_NAME, idUser));
+
+    return UserMapper.toResponseDTO(user)
+  }
+
+  async findOneByMail(mail: string) {
+    const user = await this.repository.findOneBy({ mail: mail })
+
+    if (!user) throw new NotFoundException(ErrorMessages.notFoundByStringMessage(this.RESOURCE_NAME, 'mail', mail));
 
     return UserMapper.toResponseDTO(user)
   }
@@ -41,7 +52,7 @@ export class UsersService {
   async update(idUser: number, updateUserDto: UpdateUserDto) {
     const userRequested = await this.repository.findOneBy({ id: idUser })
 
-    if (!userRequested) throw new NotFoundException(this.notFoundMessage(idUser));
+    if (!userRequested) throw new NotFoundException(ErrorMessages.notFoundByIdMessage(this.RESOURCE_NAME, idUser));
     //user with new update values
     const userUpdated = UserMapper.updateUserFromDTO(userRequested, updateUserDto)
 
@@ -53,7 +64,7 @@ export class UsersService {
   async remove(idUser: number) {
     const userRequested = await this.repository.findOneBy({ id: idUser })
 
-    if (!userRequested) throw new NotFoundException(this.notFoundMessage(idUser));
+    if (!userRequested) throw new NotFoundException(ErrorMessages.notFoundByIdMessage(this.RESOURCE_NAME, idUser));
 
     //role validation for Delete
     if (userRequested.role == UserType.ADMIN) throw new ForbiddenException(`Users with Admin role cannot be deleted`)
@@ -61,9 +72,5 @@ export class UsersService {
     const userDeleted = await this.repository.softRemove(userRequested)
 
     return UserMapper.toResponseDTO(userDeleted)
-  }
-
-  private notFoundMessage(id: number) {
-    return `User with id ${id} was not founded`
   }
 }
