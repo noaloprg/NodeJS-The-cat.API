@@ -12,6 +12,12 @@ async function bootstrap() {
     .setTitle('Cat API')
     .setVersion('1.0')
     .setDescription('API to manage and consult cats')
+    .addBearerAuth({
+      type: 'http',
+      scheme: 'bearer',
+      name: 'AUTORIZACION DE USUARIOS',
+      description: 'Introduce Token JWT',
+    }, 'JWT-auth')
     .build()
 
   //creation of document JSON/YAML
