@@ -23,6 +23,6 @@ export class RolesGuard implements CanActivate {
         const userRequest = request.user;
 
         //role value verification
-        return requiredRoles.some((role) => userRequest.role === role)
+        return requiredRoles.some((role) => userRequest?.role === role)
     }
 }
