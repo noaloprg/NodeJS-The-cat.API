@@ -26,8 +26,8 @@ export class VerificationService {
 
     verificationTemp.verificationToken = this.generateToken()
 
-    const verification = await this.repository.save(verificationTemp)
-    return this.mapper.toResponseDTO(verification)
+    await this.repository.save(verificationTemp)
+    return this.mapper.toResponseUserDto(verificationTemp.targetEmail)
   }
 
   async findAll() {

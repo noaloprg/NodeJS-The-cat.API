@@ -1,5 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { CreateVerificationDto } from "src/verification/dto/create-verification.dto";
+import { ResponseUserVerification } from "src/verification/dto/response-user-verification.dto";
 import { ResponseVerificationDTO } from "src/verification/dto/response-verification.dto";
 import { Verification } from "src/verification/entities/verification.entity";
 
@@ -22,6 +23,13 @@ export class VerificationMapper {
         dto.updatedAt = verification.updatedAt
         dto.verificationToken = verification.verificationToken
         return Object.assign(dto, verification)
+    }
+
+    toResponseUserDto(mail: string) {
+        const response = new ResponseUserVerification()
+        response.mail = mail
+        response.message = 'User registered. Pending validation from administrator'
+        return response;
     }
 
 }
