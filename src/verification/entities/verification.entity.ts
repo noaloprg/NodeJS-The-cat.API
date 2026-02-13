@@ -1,7 +1,8 @@
 import { IsEmail, IsOptional, IsString } from "class-validator";
 import { UserLanguage } from "src/users/enums/User-language.enum";
-import { Column, CreateDateColumn, DeleteDateColumn, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Column, CreateDateColumn, DeleteDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
+@Entity()
 export class Verification {
     @PrimaryGeneratedColumn()
     id: number
