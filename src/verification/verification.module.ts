@@ -6,5 +6,6 @@ import { VerificationMapper } from 'src/common/mappers/verification.mapper';
 @Module({
   controllers: [VerificationController],
   providers: [VerificationService, VerificationMapper],
+  exports: [VerificationService]
 })
 export class VerificationModule { }
