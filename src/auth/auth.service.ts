@@ -1,16 +1,20 @@
 import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { ErrorMessages } from 'src/common/constants/error-messages';
-import { User } from 'src/users/entities/user.entity';
-import { UserSeeder } from 'src/users/entities/user.seeder';
 import { UsersService } from 'src/users/users.service';
 import { LoginDTO } from './dto/login.dto';
+import { RegisterDTO } from './dto/register.dto';
+import { VerificationService } from 'src/verification/verification.service';
+import { VerificationMapper } from 'src/common/mappers/verification.mapper';
 
 @Injectable()
 export class AuthService {
-    constructor(private jwtService: JwtService, private userService: UsersService) { }
+    constructor(
+        private jwtService: JwtService,
+        private userService: UsersService,
+        private verificationService: VerificationService,
+        private mapper: VerificationMapper
+    ) { }
 
-    // JWTModule uses .registerAsync()
     async login(loginDto: LoginDTO) {
         const userRequested = await this.userService.getUserByMail(loginDto.mail)
 
@@ -27,4 +31,13 @@ export class AuthService {
             access_token: await this.jwtService.signAsync(payload)
         }
     }
+
+    async register(registerDTO: RegisterDTO) {
+        const verifiTemp = this.mapper.createVerificationFromDTO(registerDTO)
+
+        //service returns repsonse DTO
+        const verification = this.verificationService.create(verifiTemp)        
+        return verification
+    }
+
 }

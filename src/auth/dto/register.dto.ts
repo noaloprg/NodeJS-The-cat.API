@@ -3,20 +3,21 @@ import { IsEmail, IsString, MaxLength, MinLength } from "class-validator"
 
 export class RegisterDTO {
     @ApiProperty({
-        example: 'user@gmail.com'
+        example: 'pepe@gmail.com'
     })
     @IsEmail()
     @MaxLength(150)
     targetEmail: string
 
     @ApiProperty({
-        example: 'person'
+        example: 'pepe'
     })
     @IsString()
     @MaxLength(50)
     name?: string | null
 
     @ApiProperty({
+        type: String,
         example: '12345678'
     })
     @IsString()
