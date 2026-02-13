@@ -30,31 +30,24 @@ export class VerificationService {
     return this.mapper.toResponseUserDto(verificationTemp.targetEmail)
   }
 
-  async findAll() {
-    return (await this.repository.find()).map(ver => this.mapper.toResponseDTO(ver))
-  }
-
   async findAllNotAccepted() {
     const allVerifications = await this.repository.find({ where: { acceptedAt: IsNull() } })
     return allVerifications.map(verif => this.mapper.toResponseDTO(verif))
   }
 
   async findOne(idVerif: number) {
-    const verification = await this.checkExistance(idVerif)
+    const verification = await this.checkExistence(idVerif)
     return this.mapper.toResponseDTO(verification)
+  }
+
+  async findEntityById(id: number) {
+    return await this.checkExistence(id)
   }
 
   async update(idVerif: number) {
-    const verification = await this.checkExistance(idVerif)
+    const verification = await this.checkExistence(idVerif)
     verification.acceptedAt = new Date()
     return this.mapper.toResponseDTO(verification)
-  }
-
-  async remove(idVerif: number) {
-    const verification = await this.checkExistance(idVerif)
-
-    const verifDeleted = await this.repository.softRemove(verification)
-    return this.mapper.toResponseDTO(verifDeleted)
   }
 
   async deleteAllUnverified() {
@@ -72,7 +65,7 @@ export class VerificationService {
     return randomBytes(16).toString('hex')
   }
 
-  private async checkExistance(idVerif: number) {
+  private async checkExistence(idVerif: number) {
     const verification = await this.repository.findOneBy({ id: idVerif })
 
     if (!verification)
