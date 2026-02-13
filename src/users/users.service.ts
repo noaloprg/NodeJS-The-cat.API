@@ -22,9 +22,8 @@ export class UsersService {
 
     const userExist = await this.repository.exists({ where: { mail: tempUser.mail } })
 
-    if (userExist) {
-      throw new ConflictException('User already exists in DB')
-    }
+    if (userExist)
+      throw new ConflictException('User already exists in DB');
 
     const userCreated = await this.repository.save(tempUser)
     return this.userMapper.toResponseDTO(userCreated)
@@ -36,16 +35,14 @@ export class UsersService {
   }
 
   async findOne(idUser: number) {
-    const user = await this.repository.findOneBy({ id: idUser })
+    const user = await this.checkExistanceById(idUser, ErrorMessages.notFoundByIdMessage(this.RESOURCE_NAME, idUser))
 
-    if (!user) throw new NotFoundException(ErrorMessages.notFoundByIdMessage(this.RESOURCE_NAME, idUser));
 
     return this.userMapper.toResponseDTO(user)
   }
 
   async findOneByMail(mail: string) {
     const user = await this.repository.findOneBy({ mail: mail })
-
     if (!user) throw new NotFoundException(ErrorMessages.notFoundByStringMessage(this.RESOURCE_NAME, 'mail', mail));
 
     return this.userMapper.toResponseDTO(user)
@@ -54,16 +51,13 @@ export class UsersService {
   //gets user with password 
   async getUserByMail(mail: string) {
     const user = await this.repository.findOneBy({ mail: mail })
-
     if (!user) throw new NotFoundException(ErrorMessages.notFoundByStringMessage(this.RESOURCE_NAME, 'mail', mail));
-
     return user
   }
 
   async update(idUser: number, updateUserDto: UpdateUserDto) {
-    const userRequested = await this.repository.findOneBy({ id: idUser })
+    const userRequested = await this.checkExistanceById(idUser, ErrorMessages.notFoundByIdMessage(this.RESOURCE_NAME, idUser))
 
-    if (!userRequested) throw new NotFoundException(ErrorMessages.notFoundByIdMessage(this.RESOURCE_NAME, idUser));
     //user with new update values
     const userUpdated = this.userMapper.updateUserFromDTO(userRequested, updateUserDto)
 
@@ -73,9 +67,7 @@ export class UsersService {
   }
 
   async remove(idUser: number) {
-    const userRequested = await this.repository.findOneBy({ id: idUser })
-
-    if (!userRequested) throw new NotFoundException(ErrorMessages.notFoundByIdMessage(this.RESOURCE_NAME, idUser));
+    const userRequested = await this.checkExistanceById(idUser, ErrorMessages.notFoundByIdMessage(this.RESOURCE_NAME, idUser))
 
     //role validation for Delete
     if (userRequested.role == UserType.ADMIN) throw new ForbiddenException(`Users with Admin role cannot be deleted`)
@@ -83,5 +75,12 @@ export class UsersService {
     const userDeleted = await this.repository.softRemove(userRequested)
 
     return this.userMapper.toResponseDTO(userDeleted)
+  }
+
+  private async checkExistanceById(idUser: number, message: string) {
+    const userRequested = await this.repository.findOneBy({ id: idUser })
+
+    if (!userRequested) throw new NotFoundException(message);
+    return userRequested
   }
 }
