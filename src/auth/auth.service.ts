@@ -6,6 +6,7 @@ import { RegisterDTO } from './dto/register.dto';
 import { VerificationService } from 'src/verification/verification.service';
 import { VerificationMapper } from 'src/common/mappers/verification.mapper';
 import { ErrorMessages } from 'src/common/constants/error-messages';
+import { VerifyDto } from './dto/verify.dto';
 
 @Injectable()
 export class AuthService {
@@ -35,7 +36,7 @@ export class AuthService {
 
     async register(registerDTO: RegisterDTO) {
         await this.userService.checkExisanceByEmail(registerDTO.targetEmail)
-        
+
         const verifiTemp = this.mapper.createVerificationFromDTO(registerDTO)
         //service returns repsonse DTO
         const verification = this.verificationService.create(verifiTemp)
@@ -50,10 +51,12 @@ export class AuthService {
         return this.verificationService.deleteAllUnverified()
     }
 
-    async accept(id: number, token: string) {
-        const requested = await this.verificationService.findEntityById(id)
-        if (!requested) throw new NotFoundException(ErrorMessages.notFoundByIdMessage('record', id))
-        if (requested.verificationToken === token) {
+    async accept(dto : VerifyDto) {
+        const requested = await this.verificationService.findEntityById(dto.id)
+        if (!requested) throw new NotFoundException(ErrorMessages.notFoundByIdMessage('record', dto.id))
+        if (requested.verificationToken === dto.token) {
+            requested.acceptedAt = new Date()
+            this.verificationService.saveInstance(requested)
             return this.userService.createUserFromVerification(requested)
         }
         else throw new NotFoundException('token invalid')

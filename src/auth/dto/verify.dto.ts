@@ -14,4 +14,3 @@ export class VerifyDto {
     @IsString()
     token: string
 }
-//eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsIm1haWwiOiJhZG1pbkBhZG1pbi5jb20iLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3NzA5ODc0NTYsImV4cCI6MTc3MDk4NzU3Nn0.wteqCKJ7i_PtIcBCJVIoJBJ04m91RJqK8OavlbWgPbw

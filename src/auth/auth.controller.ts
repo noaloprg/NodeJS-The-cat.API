@@ -8,6 +8,7 @@ import { Roles } from 'src/common/decorators/role.decorator';
 import { UserType } from 'src/users/enums/User-role.enum';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { RolesGuard } from './guards/role.guard';
+import { VerifyDto } from './dto/verify.dto';
 @Controller('auth')
 export class AuthController {
   constructor(private readonly service: AuthService) { }
@@ -42,9 +43,9 @@ export class AuthController {
   @ApiBearerAuth(BEARER_KEY)
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserType.ADMIN)
-  @Post('verify/:id/:token')
-  async verify(@Param('id') id : number, @Param('token') token:string) {
-    return this.service.accept(id, token)
+  @Post('verify')
+  async verify(@Body() dto: VerifyDto) {
+    return this.service.accept(dto)
   }
 
 

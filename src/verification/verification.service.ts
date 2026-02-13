@@ -73,4 +73,8 @@ export class VerificationService {
 
     return verification
   }
+
+  public async saveInstance(verif: Verification) {
+    this.repository.save(verif)
+  }
 }
