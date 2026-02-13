@@ -8,12 +8,23 @@ import { User } from "src/users/entities/user.entity";
 export class UserMapper {
     createUserFromDTO(createDTO: CreateUserDto) {
         const user = new User()
-        return Object.assign(user, createDTO)
+        user.mail = createDTO.mail
+        user.name = createDTO.name
+        user.password = createDTO.password
+        return user
     }
 
     toResponseDTO(user: User) {
         const response = new ResponseUserDTO()
-        return Object.assign(response, user)
+        response.id = user.id
+        response.mail = user.mail
+        response.name = user.name
+        response.role = user.role
+        response.language = user.language
+        response.createdAt = user.createdAt
+        response.updatedAt = user.updatedAt
+        response.deletedAt = user.deletedAt
+        return response
     }
 
     updateUserFromDTO(user: User, updateDTO: UpdateUserDto): User {
