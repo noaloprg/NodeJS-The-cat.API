@@ -84,6 +84,12 @@ export class UsersService {
     return this.userMapper.toResponseDTO(userDeleted)
   }
 
+  public async checkExisanceByEmail(email: string) {
+    const userRequested = await this.repository.findOneBy({ mail: email })
+
+    if (userRequested) throw new ConflictException(ErrorMessages.mailAlreadyRegistered());
+
+  }
   private async checkExistanceById(idUser: number, message: string) {
     const userRequested = await this.repository.findOneBy({ id: idUser })
 

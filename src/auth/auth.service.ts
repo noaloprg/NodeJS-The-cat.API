@@ -34,8 +34,9 @@ export class AuthService {
     }
 
     async register(registerDTO: RegisterDTO) {
+        await this.userService.checkExisanceByEmail(registerDTO.targetEmail)
+        
         const verifiTemp = this.mapper.createVerificationFromDTO(registerDTO)
-
         //service returns repsonse DTO
         const verification = this.verificationService.create(verifiTemp)
         return verification
