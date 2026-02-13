@@ -38,4 +38,14 @@ export class AuthController {
   async reject() {
     return this.service.reject()
   }
+
+  @ApiBearerAuth(BEARER_KEY)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserType.ADMIN)
+  @Post('verify/:id/:token')
+  async verify(@Param('id') id : number, @Param('token') token:string) {
+    return this.service.accept(id, token)
+  }
+
+
 }

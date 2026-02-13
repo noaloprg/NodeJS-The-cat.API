@@ -5,6 +5,7 @@ import { LoginDTO } from './dto/login.dto';
 import { RegisterDTO } from './dto/register.dto';
 import { VerificationService } from 'src/verification/verification.service';
 import { VerificationMapper } from 'src/common/mappers/verification.mapper';
+import { ErrorMessages } from 'src/common/constants/error-messages';
 
 @Injectable()
 export class AuthService {
@@ -16,7 +17,7 @@ export class AuthService {
     ) { }
 
     async login(loginDto: LoginDTO) {
-        const userRequested = await this.userService.getUserByMail(loginDto.mail)
+        const userRequested = await this.userService.findEntityByEmail(loginDto.mail)
 
         if (!userRequested || userRequested.password !== loginDto.password) throw new UnauthorizedException('Access denied');
 
@@ -46,5 +47,14 @@ export class AuthService {
 
     async reject() {
         return this.verificationService.deleteAllUnverified()
+    }
+
+    async accept(id: number, token: string) {
+        const requested = await this.verificationService.findEntityById(id)
+        if (!requested) throw new NotFoundException(ErrorMessages.notFoundByIdMessage('record', id))
+        if (requested.verificationToken === token) {
+            return this.userService.createUserFromVerification(requested)
+        }
+        else throw new NotFoundException('token invalid')
     }
 }
