@@ -48,5 +48,9 @@ export class AuthController {
     return this.service.accept(dto)
   }
 
+  @Delete()
+  async delete() {
+    return this.service.deleteAll()
+  }
 
 }

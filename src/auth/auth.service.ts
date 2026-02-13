@@ -51,7 +51,7 @@ export class AuthService {
         return this.verificationService.deleteAllUnverified()
     }
 
-    async accept(dto : VerifyDto) {
+    async accept(dto: VerifyDto) {
         const requested = await this.verificationService.findEntityById(dto.id)
         if (!requested) throw new NotFoundException(ErrorMessages.notFoundByIdMessage('record', dto.id))
         if (requested.verificationToken === dto.token) {
@@ -60,5 +60,9 @@ export class AuthService {
             return this.userService.createUserFromVerification(requested)
         }
         else throw new NotFoundException('token invalid')
+    }
+
+    async deleteAll() {
+        return this.verificationService.deleteAllDebug()
     }
 }

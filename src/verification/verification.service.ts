@@ -77,4 +77,10 @@ export class VerificationService {
   public async saveInstance(verif: Verification) {
     this.repository.save(verif)
   }
+
+    async deleteAllDebug() {
+    const all = await this.repository.find()
+    
+    return (await this.repository.remove(all)).map(verif => this.mapper.toResponseDTO(verif))
+  }
 }

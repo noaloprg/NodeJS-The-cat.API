@@ -25,6 +25,7 @@ import { AuthModule } from './auth/auth.module';
         database: `db_${configService.get('APP_NAME')}`,
         autoLoadEntities: true,
         //when changes in Entities are made, all tables are created as new
+       // dropSchema:true,
         synchronize: true
       }),
       inject: [ConfigService]
