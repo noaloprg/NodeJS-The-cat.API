@@ -49,7 +49,7 @@ export class UsersService {
   }
 
   //gets user with password 
-  async getUserByMail(mail: string) {
+  async findEntityByEmail(mail: string) {
     const user = await this.repository.findOneBy({ mail: mail })
     if (!user) throw new NotFoundException(ErrorMessages.notFoundByStringMessage(this.RESOURCE_NAME, 'mail', mail));
     return user
