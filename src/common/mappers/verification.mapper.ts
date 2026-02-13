@@ -22,7 +22,7 @@ export class VerificationMapper {
         dto.targetEmail = verification.targetEmail
         dto.updatedAt = verification.updatedAt
         dto.verificationToken = verification.verificationToken
-        return Object.assign(dto, verification)
+        return dto
     }
 
     toResponseUserDto(mail: string) {

@@ -38,6 +38,6 @@ export class UserMapper {
         createDTO.name = verif.name
         createDTO.password = verif.password
 
-        return createDTO
+        return this.createUserFromDTO(createDTO)
     }
 }
