@@ -7,9 +7,11 @@ import { ConfigService } from '@nestjs/config';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { VerificationModule } from 'src/verification/verification.module';
+import { VerificationMapper } from 'src/common/mappers/verification.mapper';
 
 @Module({
-  imports: [UsersModule, VerificationModule,
+  imports: [UsersModule,
+    VerificationModule,
     JwtModule.registerAsync({
       //JWT config
       inject: [ConfigService],
@@ -25,6 +27,6 @@ import { VerificationModule } from 'src/verification/verification.module';
     })
   ],
   controllers: [AuthController],
-  providers: [AuthService, JwtStrategy, JwtAuthGuard],
+  providers: [AuthService, JwtStrategy, JwtAuthGuard, VerificationMapper],
 })
 export class AuthModule { }
