@@ -36,18 +36,19 @@ export class VerificationService {
 
   async findOne(idVerif: number) {
     const verification = await this.checkExistance(idVerif)
+
     return this.mapper.toResponseDTO(verification)
+
   }
 
   async update(idVerif: number) {
-    const verification = await this.findOne(idVerif)
-
+    const verification = await this.checkExistance(idVerif)
     verification.acceptedAt = new Date()
     return this.mapper.toResponseDTO(verification)
   }
 
   async remove(idVerif: number) {
-    const verification = await this.findOne(idVerif)
+    const verification = await this.checkExistance(idVerif)
 
     const verifDeleted = await this.repository.softRemove(verification)
     return this.mapper.toResponseDTO(verifDeleted)
