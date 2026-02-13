@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ValidationPipe } from '@nestjs/common';
+import { BEARER_KEY } from './common/constants/keys';
 
 async function bootstrap() {
   //instance of App
@@ -17,7 +18,7 @@ async function bootstrap() {
       scheme: 'bearer',
       name: 'AUTORIZACION DE USUARIOS',
       description: 'Introduce Token JWT',
-    }, 'JWT-auth')
+    }, BEARER_KEY)
     .build()
 
   //creation of document JSON/YAML

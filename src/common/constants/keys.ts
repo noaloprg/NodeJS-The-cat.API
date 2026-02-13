@@ -1,0 +1,1 @@
+export const BEARER_KEY = 'JWT-auth'

@@ -7,9 +7,10 @@ import { UserType } from './enums/User-role.enum';
 import { RolesGuard } from 'src/auth/guards/role.guard';
 import { ApiBearerAuth } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { BEARER_KEY } from 'src/common/constants/keys';
 
 //key from .addBearerAuth() in swaggerConfig (main.ts)
-@ApiBearerAuth('JWT-auth')
+@ApiBearerAuth(BEARER_KEY)
 @UseGuards(JwtAuthGuard, RolesGuard)
 
 @Controller('users')
