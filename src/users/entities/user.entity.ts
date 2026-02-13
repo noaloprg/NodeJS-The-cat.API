@@ -10,11 +10,11 @@ export class User {
     @Column({ length: 150, unique: true })
     mail: string
 
-    @Column({ type: 'varchar', length: 50, nullable: true })
-    name?: string | null
+    @Column({ type: 'varchar', length: 50 })
+    name: string 
 
-    @Column({ type: 'varchar', nullable: true })
-    password?: string | null
+    @Column({ type: 'varchar'})
+    password: string 
 
     @Column({ type: 'enum', enum: UserType, default: UserType.USER })
     role: UserType

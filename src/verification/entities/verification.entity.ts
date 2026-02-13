@@ -13,11 +13,11 @@ export class Verification {
     @Column()
     verificationToken: string
 
-    @Column({ type: 'varchar', length: 50, nullable: true })
-    name?: string | null
+    @Column({ type: 'varchar', length: 50 })
+    name: string 
 
-    @Column({ type: 'varchar', nullable: true })
-    password?: string | null
+    @Column({ type: 'varchar' })
+    password: string 
 
     @Column({ type: 'enum', enum: UserLanguage, default: UserLanguage.ES })
     language: UserLanguage

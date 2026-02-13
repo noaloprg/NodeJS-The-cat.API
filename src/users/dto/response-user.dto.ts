@@ -4,7 +4,7 @@ import { UserLanguage } from "../enums/User-language.enum"
 export class ResponseUserDTO {
     id: number
     mail: string
-    name?: string | null
+    name: string
     role: UserType
     language: UserLanguage
     createdAt: Date

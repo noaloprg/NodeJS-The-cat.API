@@ -15,7 +15,7 @@ export class CreateUserDto {
     @IsString()
     @IsOptional()
     @MaxLength(50)
-    name?: string | null
+    name: string
 
     @ApiProperty({
         example: '12345678',
@@ -23,5 +23,5 @@ export class CreateUserDto {
     @IsString()
     @IsOptional()
     @MinLength(8)
-    password?: string | null
+    password: string
 }

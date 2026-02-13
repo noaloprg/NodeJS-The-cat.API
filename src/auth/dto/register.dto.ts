@@ -14,7 +14,7 @@ export class RegisterDTO {
     })
     @IsString()
     @MaxLength(50)
-    name?: string | null
+    name: string 
 
     @ApiProperty({
         type: String,
@@ -22,5 +22,5 @@ export class RegisterDTO {
     })
     @IsString()
     @MinLength(8)
-    password?: string | null
+    password: string 
 }

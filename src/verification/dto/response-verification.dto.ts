@@ -1,7 +1,7 @@
 export class ResponseVerificationDTO {
     id: number
     targetEmail: string
-    name?: string | null
+    name: string 
     verificationToken: string
     acceptedAt?: Date | null
     createdAt: Date
