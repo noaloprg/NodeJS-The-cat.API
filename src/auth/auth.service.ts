@@ -36,8 +36,15 @@ export class AuthService {
         const verifiTemp = this.mapper.createVerificationFromDTO(registerDTO)
 
         //service returns repsonse DTO
-        const verification = this.verificationService.create(verifiTemp)        
+        const verification = this.verificationService.create(verifiTemp)
         return verification
     }
 
+    async findAll() {
+        return this.verificationService.findAllNotAccepted()
+    }
+
+    async reject() {
+        return this.verificationService.deleteAllUnverified()
+    }
 }

@@ -1,11 +1,11 @@
 import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateVerificationDto } from './dto/create-verification.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { IsNull, Repository } from 'typeorm';
 import { Verification } from './entities/verification.entity';
 import { VerificationMapper } from 'src/common/mappers/verification.mapper';
 import { randomBytes } from 'crypto';
-import { NotFoundError } from 'rxjs';
+import { map, NotFoundError } from 'rxjs';
 import { ErrorMessages } from 'src/common/constants/error-messages';
 
 @Injectable()
@@ -34,11 +34,14 @@ export class VerificationService {
     return (await this.repository.find()).map(ver => this.mapper.toResponseDTO(ver))
   }
 
+  async findAllNotAccepted() {
+    const allVerifications = await this.repository.find({ where: { acceptedAt: IsNull() } })
+    return allVerifications.map(verif => this.mapper.toResponseDTO(verif))
+  }
+
   async findOne(idVerif: number) {
     const verification = await this.checkExistance(idVerif)
-
     return this.mapper.toResponseDTO(verification)
-
   }
 
   async update(idVerif: number) {
@@ -52,6 +55,17 @@ export class VerificationService {
 
     const verifDeleted = await this.repository.softRemove(verification)
     return this.mapper.toResponseDTO(verifDeleted)
+  }
+
+  async deleteAllUnverified() {
+    const allUnverified = await this.repository.find({ where: { acceptedAt: IsNull() } })
+    allUnverified.forEach(
+      verif => {
+        verif.deletedAt = new Date(),
+          verif.updatedAt = new Date()
+      }
+    )
+    return (await this.repository.remove(allUnverified)).map(verif => this.mapper.toResponseDTO(verif))
   }
 
   private generateToken() {
