@@ -9,5 +9,5 @@ export class UpdateUserDto extends CreateUserDto {
     })
     @IsEnum(UserLanguage)
     @IsOptional()
-    language?: UserLanguage
+    language?: UserLanguage | null
 }
