@@ -1,6 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateVerificationDto } from './dto/create-verification.dto';
-import { UpdateVerificationDto } from './dto/update-verification.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Verification } from './entities/verification.entity';
@@ -30,25 +29,21 @@ export class VerificationService {
     return (await this.repository.find()).map(ver => this.mapper.toResponseDTO(ver))
   }
 
-  async findOne(idVerification: number) {
-    const verification = await this.repository.findOneBy({ id: idVerification })
-
-    if (!verification)
-      throw new NotFoundException(ErrorMessages.notFoundByIdMessage(this.RESOURCE_NAME, idVerification));
+  async findOne(idVerif: number) {
+    const verification = await this.getVerification(idVerif)
 
     return this.mapper.toResponseDTO(verification)
 
   }
 
-  update(id: number, updateVerificationDto: UpdateVerificationDto) {
-
+  async update(idVerif: number) {
+    const verification = await this.getVerification(idVerif)
+    verification.acceptedAt = new Date()
+    return this.mapper.toResponseDTO(verification)
   }
 
   async remove(idVerif: number) {
-    const verification = await this.repository.findOneBy({ id: idVerif })
-
-    if (!verification)
-      throw new NotFoundException(ErrorMessages.notFoundByIdMessage(this.RESOURCE_NAME, idVerif));
+    const verification = await this.getVerification(idVerif)
 
     const verifDeleted = await this.repository.softRemove(verification)
     return this.mapper.toResponseDTO(verifDeleted)
@@ -56,5 +51,14 @@ export class VerificationService {
 
   private generateToken() {
     return randomBytes(16).toString('hex')
+  }
+
+  private async getVerification(idVerif: number) {
+    const verification = await this.repository.findOneBy({ id: idVerif })
+
+    if (!verification)
+      throw new NotFoundException(ErrorMessages.notFoundByIdMessage(this.RESOURCE_NAME, idVerif));
+
+    return verification
   }
 }
