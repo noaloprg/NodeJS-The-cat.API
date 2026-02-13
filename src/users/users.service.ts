@@ -56,7 +56,7 @@ export class UsersService {
   }
 
   async update(idUser: number, updateUserDto: UpdateUserDto) {
-    const userRequested = await this.checkExistanceById(idUser, ErrorMessages.notFoundByIdMessage(this.RESOURCE_NAME, idUser))
+    const userRequested = await this.findOne(idUser)
 
     //user with new update values
     const userUpdated = this.userMapper.updateUserFromDTO(userRequested, updateUserDto)
@@ -67,7 +67,7 @@ export class UsersService {
   }
 
   async remove(idUser: number) {
-    const userRequested = await this.checkExistanceById(idUser, ErrorMessages.notFoundByIdMessage(this.RESOURCE_NAME, idUser))
+    const userRequested = await this.findOne(idUser)
 
     //role validation for Delete
     if (userRequested.role == UserType.ADMIN) throw new ForbiddenException(`Users with Admin role cannot be deleted`)
