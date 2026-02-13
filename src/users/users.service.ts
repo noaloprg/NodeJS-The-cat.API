@@ -7,6 +7,7 @@ import { Repository } from 'typeorm';
 import { UserType } from './enums/User-role.enum';
 import { UserMapper } from 'src/common/mappers/user.mapper';
 import { ErrorMessages as ErrorMessages } from 'src/common/constants/error-messages';
+import { Verification } from 'src/verification/entities/verification.entity';
 
 @Injectable()
 export class UsersService {
@@ -27,6 +28,12 @@ export class UsersService {
 
     const userCreated = await this.repository.save(tempUser)
     return this.userMapper.toResponseDTO(userCreated)
+  }
+
+  async createUserFromVerification(verification: Verification) {
+    const userDTO = this.userMapper.createUserDTOFromVerification(verification)
+    const user = await this.create(userDTO)
+    return this.userMapper.toResponseDTO(user)
   }
 
   async findAll() {
