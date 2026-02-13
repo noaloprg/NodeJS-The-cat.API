@@ -23,7 +23,7 @@ export class UsersService {
     const userExist = await this.repository.exists({ where: { mail: tempUser.mail } })
 
     if (userExist)
-      throw new ConflictException('User already exists in DB');
+      throw new ConflictException(ErrorMessages.mailAlreadyRegistered());
 
     const userCreated = await this.repository.save(tempUser)
     return this.userMapper.toResponseDTO(userCreated)

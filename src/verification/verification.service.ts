@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateVerificationDto } from './dto/create-verification.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -18,7 +18,12 @@ export class VerificationService {
   constructor(private readonly mapper: VerificationMapper) { }
 
   async create(createVerificationDto: CreateVerificationDto) {
+    const verificationExists = await this.repository.exists({ where: { targetEmail: createVerificationDto.targetEmail } })
+
+    if (verificationExists) throw new ConflictException(ErrorMessages.mailAlreadyRegistered());
+
     let verificationTemp = this.mapper.createVerificationFromDTO(createVerificationDto)
+
     verificationTemp.verificationToken = this.generateToken()
 
     const verification = await this.repository.save(verificationTemp)
@@ -30,20 +35,20 @@ export class VerificationService {
   }
 
   async findOne(idVerif: number) {
-    const verification = await this.getVerification(idVerif)
+    const verification = await this.checkExistance(idVerif)
 
     return this.mapper.toResponseDTO(verification)
 
   }
 
   async update(idVerif: number) {
-    const verification = await this.getVerification(idVerif)
+    const verification = await this.checkExistance(idVerif)
     verification.acceptedAt = new Date()
     return this.mapper.toResponseDTO(verification)
   }
 
   async remove(idVerif: number) {
-    const verification = await this.getVerification(idVerif)
+    const verification = await this.checkExistance(idVerif)
 
     const verifDeleted = await this.repository.softRemove(verification)
     return this.mapper.toResponseDTO(verifDeleted)
@@ -53,7 +58,7 @@ export class VerificationService {
     return randomBytes(16).toString('hex')
   }
 
-  private async getVerification(idVerif: number) {
+  private async checkExistance(idVerif: number) {
     const verification = await this.repository.findOneBy({ id: idVerif })
 
     if (!verification)
