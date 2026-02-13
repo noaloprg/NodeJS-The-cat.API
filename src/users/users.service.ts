@@ -31,8 +31,8 @@ export class UsersService {
   }
 
   async createUserFromVerification(verification: Verification) {
-    const userDTO = this.userMapper.createUserDTOFromVerification(verification)
-    const user = await this.create(userDTO)
+    const userTemp = this.userMapper.createUserDTOFromVerification(verification)
+    const user = await this.repository.save(userTemp)
     return this.userMapper.toResponseDTO(user)
   }
 
