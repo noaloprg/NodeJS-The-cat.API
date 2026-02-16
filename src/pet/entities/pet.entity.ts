@@ -8,7 +8,7 @@ export class Pet {
     @PrimaryGeneratedColumn()
     id: number
 
-    @Column({ length: 50 })
+    @Column({ length: 25 })
     petName: string
 
     @CreateDateColumn({ type: 'timestamptz' })
