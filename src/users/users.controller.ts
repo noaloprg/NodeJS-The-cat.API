@@ -12,13 +12,11 @@ import { BEARER_KEY } from 'src/common/constants/keys';
 //key from .addBearerAuth() in swaggerConfig (main.ts)
 @ApiBearerAuth(BEARER_KEY)
 @UseGuards(JwtAuthGuard, RolesGuard)
-
+@Roles(UserType.ADMIN)
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) { }
-
-
-  @Roles(UserType.ADMIN)
+  
   @Post()
   async create(@Body() createUserDto: CreateUserDto) {
     return await this.usersService.create(createUserDto);
