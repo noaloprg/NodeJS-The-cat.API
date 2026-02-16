@@ -9,8 +9,8 @@ import { Verification } from "src/verification/entities/verification.entity";
 export class UserMapper {
     createUserFromDTO(createDTO: CreateUserDto) {
         const user = new User()
-        user.mail = createDTO.mail
-        user.name = createDTO.name
+        user.mail = createDTO.mail.toLocaleLowerCase().trim()
+        user.name = createDTO.name.toLocaleLowerCase().trim()
         user.password = createDTO.password
         return user
     }

@@ -9,6 +9,8 @@ export class VerificationMapper {
 
     createVerificationFromDTO(createDTO: CreateVerificationDto) {
         const verification = new Verification()
+        createDTO.targetEmail = createDTO.targetEmail.toLocaleLowerCase().trim()
+        createDTO.name = createDTO.name.toLocaleLowerCase().trim()
         return Object.assign(verification, createDTO)
     }
 
