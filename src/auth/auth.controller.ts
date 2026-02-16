@@ -2,7 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@n
 import { AuthService } from './auth.service';
 import { LoginDTO } from './dto/login.dto';
 import { RegisterDTO } from './dto/register.dto';
-import { ApiBearerAuth } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
 import { BEARER_KEY } from 'src/common/constants/keys';
 import { Roles } from 'src/common/decorators/role.decorator';
 import { UserType } from 'src/users/enums/User-role.enum';
@@ -14,12 +14,14 @@ export class AuthController {
   constructor(private readonly service: AuthService) { }
 
   @Post('login')
+  @ApiOperation({ summary: 'Iniciar sesion' })
   async login(@Body() loginDTO: LoginDTO) {
     //returns access token 
     return this.service.login(loginDTO)
   }
 
   @Post('register')
+  @ApiOperation({ summary: 'Registrar usuario' })
   async register(@Body() registerDTO: RegisterDTO) {
     return this.service.register(registerDTO)
   }
@@ -28,6 +30,7 @@ export class AuthController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserType.ADMIN)
   @Get('unverified')
+  @ApiOperation({ summary: 'Obtener todos los registros no verificados' })
   async unverified() {
     return this.service.findAll()
   }
@@ -36,6 +39,7 @@ export class AuthController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserType.ADMIN)
   @Post('reject')
+  @ApiOperation({ summary: 'Rechazar todas los registros' })
   async reject() {
     return this.service.reject()
   }
@@ -44,13 +48,14 @@ export class AuthController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserType.ADMIN)
   @Post('verify')
+  @ApiOperation({ summary: 'Verificar un registro' })
   async verify(@Body() dto: VerifyDto) {
     return this.service.accept(dto)
   }
 
   @Delete()
+  @ApiOperation({ summary: 'Metodo de prueba' })
   async delete() {
     return this.service.deleteAll()
   }
-
 }
