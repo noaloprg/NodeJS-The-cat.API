@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { CreateBreedDto } from './dto/create-breed.dto';
-import { UpdateBreedDto } from './dto/update-breed.dto';
 
 @Injectable()
 export class BreedService {
@@ -16,9 +15,6 @@ export class BreedService {
     return `This action returns a #${id} breed`;
   }
 
-  update(id: number, updateBreedDto: UpdateBreedDto) {
-    return `This action updates a #${id} breed`;
-  }
 
   remove(id: number) {
     return `This action removes a #${id} breed`;
