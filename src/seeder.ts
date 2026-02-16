@@ -11,6 +11,7 @@ seeder({
             envFilePath: '.env'
         }),
 
+        //defines in which DB has to save seeder data
         TypeOrmModule.forRootAsync({
             imports: [ConfigModule],
             useFactory: (configService: ConfigService) => ({
