@@ -1,6 +1,7 @@
+import { Breed } from "src/breed/entities/breed.entity"
 import { Pet } from "src/pet/entities/pet.entity"
 import { User } from "src/users/entities/user.entity"
-import { PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, DeleteDateColumn, ManyToOne, JoinColumn, OneToOne, Entity } from "typeorm"
+import { PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, DeleteDateColumn, ManyToOne, JoinColumn, OneToOne, Entity, JoinTable, ManyToMany } from "typeorm"
 
 @Entity()
 export class Cat {
@@ -31,4 +32,7 @@ export class Cat {
     @OneToOne(() => Pet, (p) => p.cat)
     pet: Pet
 
+    @ManyToMany(() => Breed, (b) => b.cats)
+    @JoinTable({name: 'cat_breeds'})
+    breeds: Breed[]
 }
