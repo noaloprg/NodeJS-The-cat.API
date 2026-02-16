@@ -1,20 +1,12 @@
 import { IsString, MaxLength } from "class-validator";
 
-export class CreateBreedDto {
-    @IsString()
-    @MaxLength(25)
+export class ResponseBreedDTO {
     name: string
-
-    @IsString()
     temperament: string
-
-    @IsString()
     origin: string
-
-    @IsString()
     description: string
-
-    @IsString()
     wikiUrl: string
-    
+    createdAt: Date
+    updatedAt: Date
+    deleteAt?: Date | null
 }
