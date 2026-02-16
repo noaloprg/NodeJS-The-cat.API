@@ -8,6 +8,7 @@ import { UsersController } from './users/users.controller';
 import { VerificationModule } from './verification/verification.module';
 import { AuthModule } from './auth/auth.module';
 import { PetModule } from './pet/pet.module';
+import { CatModule } from './cat/cat.module';
 
 @Module({
   imports: [
@@ -38,7 +39,9 @@ import { PetModule } from './pet/pet.module';
 
     AuthModule,
 
-    PetModule
+    PetModule,
+
+    CatModule
   ],
   controllers: [AppController],
   providers: [AppService],
