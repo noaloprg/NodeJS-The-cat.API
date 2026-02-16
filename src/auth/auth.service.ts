@@ -20,6 +20,7 @@ export class AuthService {
     async login(loginDto: LoginDTO) {
         const userRequested = await this.userService.findEntityByEmail(loginDto.mail)
 
+        //if there's no user found or password is incorrect, exception
         if (!userRequested || userRequested.password !== loginDto.password) throw new UnauthorizedException('Access denied');
 
         //contains user info
@@ -35,6 +36,10 @@ export class AuthService {
     }
 
     async register(registerDTO: RegisterDTO) {
+        /*
+        verifies if user exists before saving it into 'verification' table 
+        for consistency between verification - user
+        */
         await this.userService.checkExisanceByEmail(registerDTO.targetEmail)
 
         const verifiTemp = this.mapper.createVerificationFromDTO(registerDTO)
@@ -48,15 +53,20 @@ export class AuthService {
     }
 
     async reject() {
+        //hard delete
         return this.verificationService.deleteAllUnverified()
     }
 
     async accept(dto: VerifyDto) {
+        //looks for verification entity
         const requested = await this.verificationService.findEntityById(dto.id)
+
         if (!requested) throw new NotFoundException(ErrorMessages.notFoundByIdMessage('record', dto.id))
+
         if (requested.verificationToken === dto.token) {
-            requested.acceptedAt = new Date()
-            this.verificationService.saveInstance(requested)
+            //updates info of entity from table verification  
+            this.verificationService.acceptRegistry(requested.id)
+            
             return this.userService.createUserFromVerification(requested)
         }
         else throw new NotFoundException('token invalid')
