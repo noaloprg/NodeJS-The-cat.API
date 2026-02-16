@@ -19,9 +19,10 @@ import { VerificationMapper } from 'src/common/mappers/verification.mapper';
 
       //token config
       useFactory: (configService: ConfigService) => ({
+        //from .env
         secret: configService.get('JWT_SECRET'),
         signOptions: {
-          expiresIn: '120s'
+          expiresIn: '3m'
         }
       })
     })

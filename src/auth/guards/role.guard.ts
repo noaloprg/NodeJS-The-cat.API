@@ -10,7 +10,7 @@ export class RolesGuard implements CanActivate {
     ) { }
 
     canActivate(context: ExecutionContext): boolean {
-        //obtains the values of all decorators from the class and methods
+        //obtains values from all decorators of the controller and its methods
         const requiredRoles =
             this.reflector.getAllAndOverride<UserType[]>(ROLES_KEY, [context.getHandler(), context.getClass()])
 
