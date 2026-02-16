@@ -7,6 +7,7 @@ import { UsersModule } from './users/users.module';
 import { UsersController } from './users/users.controller';
 import { VerificationModule } from './verification/verification.module';
 import { AuthModule } from './auth/auth.module';
+import { PetModule } from './pet/pet.module';
 
 @Module({
   imports: [
@@ -35,7 +36,9 @@ import { AuthModule } from './auth/auth.module';
 
     VerificationModule,
 
-    AuthModule
+    AuthModule,
+
+    PetModule
   ],
   controllers: [AppController],
   providers: [AppService],
