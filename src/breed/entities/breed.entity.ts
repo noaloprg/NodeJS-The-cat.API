@@ -9,7 +9,7 @@ export class Breed {
     @Column()
     externalId: string
 
-    @Column()
+    @Column({ length: 25 })
     name: string
 
     @Column()
