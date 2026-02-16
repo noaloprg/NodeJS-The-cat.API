@@ -1,6 +1,7 @@
 import { MaxLength } from "class-validator";
+import { Cat } from "src/cat/entities/cat.entity";
 import { User } from "src/users/entities/user.entity";
-import { Column, CreateDateColumn, DeleteDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Column, CreateDateColumn, DeleteDateColumn, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
 @Entity()
 export class Pet {
@@ -24,6 +25,8 @@ export class Pet {
     @JoinColumn({ name: 'ownerId' })
     owner: User
 
-    @Column()
-    animalId: number
+    //if no cat no pet
+    @OneToOne(() => Cat, (c) => c.pet, { onDelete: "CASCADE" })
+    @JoinColumn({ name: 'animalId' })
+    cat: Cat
 }
