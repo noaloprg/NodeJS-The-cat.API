@@ -1,7 +1,8 @@
 import { Pet } from "src/pet/entities/pet.entity"
 import { User } from "src/users/entities/user.entity"
-import { PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, DeleteDateColumn, ManyToOne, JoinColumn, OneToOne } from "typeorm"
+import { PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, DeleteDateColumn, ManyToOne, JoinColumn, OneToOne, Entity } from "typeorm"
 
+@Entity()
 export class Cat {
     @PrimaryGeneratedColumn()
     id: number

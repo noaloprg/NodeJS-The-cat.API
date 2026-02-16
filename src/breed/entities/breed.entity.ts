@@ -1,1 +1,4 @@
-export class Breed {}
+import { Entity } from "typeorm";
+
+@Entity()
+export class Breed { }
