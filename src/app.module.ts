@@ -10,8 +10,6 @@ import { AuthModule } from './auth/auth.module';
 import { PetModule } from './pet/pet.module';
 import { CatModule } from './cat/cat.module';
 import { BreedModule } from './breed/breed.module';
-import { BreedModule } from './breed/breed.module';
-
 @Module({
   imports: [
     ConfigModule.forRoot({
