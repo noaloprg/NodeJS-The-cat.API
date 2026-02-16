@@ -32,7 +32,7 @@ export class UserMapper {
         return Object.assign(user, updateDTO)
     }
 
-    createUserDTOFromVerification(verif: Verification) {
+    createUserFromVerification(verif: Verification) {
         const createDTO = new CreateUserDto()
         createDTO.mail = verif.targetEmail
         createDTO.name = verif.name
