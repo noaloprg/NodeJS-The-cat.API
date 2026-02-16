@@ -1,16 +1,11 @@
 import { IsInt, IsString } from "class-validator"
 
-export class CreateCatDto {
-    @IsString()
+export class ResponseCatDTO {
     externalId: string
-
-    @IsString()
     url: string
-
-    @IsInt()
     width: number
-
-    @IsInt()
     height: number
-
+    createdAt: Date
+    updatedAt: Date
+    deleteAt?: Date | null
 }
