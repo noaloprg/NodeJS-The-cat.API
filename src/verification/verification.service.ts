@@ -18,15 +18,17 @@ export class VerificationService {
   constructor(private readonly mapper: VerificationMapper) { }
 
   async create(createVerificationDto: CreateVerificationDto) {
+    //checks existance 
     const verificationExists = await this.repository.exists({ where: { targetEmail: createVerificationDto.targetEmail } })
-
     if (verificationExists) throw new ConflictException(ErrorMessages.mailAlreadyRegistered());
 
+    //creates entity
     let verificationTemp = this.mapper.createVerificationFromDTO(createVerificationDto)
-
+    //modifies property from entity
     verificationTemp.verificationToken = this.generateToken()
 
     await this.repository.save(verificationTemp)
+    //responseUserDTO = message - mail
     return this.mapper.toResponseUserDto(verificationTemp.targetEmail)
   }
 
@@ -36,22 +38,23 @@ export class VerificationService {
   }
 
   async findOne(idVerif: number) {
-    const verification = await this.checkExistence(idVerif)
+    const verification = await this.checkExistenceById(idVerif)
     return this.mapper.toResponseDTO(verification)
   }
 
   async findEntityById(id: number) {
-    return await this.checkExistence(id)
+    return await this.checkExistenceById(id)
   }
 
   async update(idVerif: number) {
-    const verification = await this.checkExistence(idVerif)
+    const verification = await this.checkExistenceById(idVerif)
     verification.acceptedAt = new Date()
     return this.mapper.toResponseDTO(verification)
   }
 
   async deleteAllUnverified() {
     const allUnverified = await this.repository.find({ where: { acceptedAt: IsNull() } })
+    //updates only for showing in ResponseEntity (hard delete)
     allUnverified.forEach(
       verif => {
         verif.deletedAt = new Date(),
@@ -65,7 +68,7 @@ export class VerificationService {
     return randomBytes(16).toString('hex')
   }
 
-  private async checkExistence(idVerif: number) {
+  private async checkExistenceById(idVerif: number) {
     const verification = await this.repository.findOneBy({ id: idVerif })
 
     if (!verification)
