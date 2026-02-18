@@ -27,5 +27,6 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
   ],
   controllers: [CatController],
   providers: [CatService, CatMapper, BreedMapper],
+  exports: [CatService]
 })
 export class CatModule { }
