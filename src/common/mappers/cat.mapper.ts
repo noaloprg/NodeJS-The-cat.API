@@ -1,6 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { CreateCatDto } from "src/cat/dto/create-cat.dto";
 import { ResponseCatDTO } from "src/cat/dto/response-cat.dto";
+import { ResponseCreationCatBreedDTO } from "src/cat/dto/response-create-cat-breed.dto";
 import { Cat } from "src/cat/entities/cat.entity";
 
 @Injectable()
@@ -26,12 +27,19 @@ export class CatMapper {
         response.id = cat.id
         return response
     }
-       createDTOFromAPI(apiBody: any) {
+    createDTOFromAPI(apiBody: any) {
         const createDTO = new CreateCatDto()
         createDTO.externalId = apiBody.id.toLocaleLowerCase().trim()
         createDTO.height = apiBody.height
         createDTO.url = apiBody.url
         createDTO.width = apiBody.width
         return createDTO
+    }
+
+    toResponseCreationAPI(created: number, duplicated: number) {
+        const response = new ResponseCreationCatBreedDTO()
+        response.create = created
+        response.duplicated = duplicated
+        return response
     }
 }

@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { BadRequestException, HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateCatDto } from './dto/create-cat.dto';
 import { HttpService } from '@nestjs/axios';
 import { firstValueFrom } from 'rxjs';
@@ -43,32 +43,33 @@ export class CatService {
     let created = 0
     let duplicated = 0
 
-    for (const catDTO of createDTOs) {
-      // creates Cat from createCatDTO
-      const cat = await this.create(catDTO.cat)
+    if (amount > 0) {
+      for (const catDTO of createDTOs) {
+        // creates Cat from createCatDTO
+        const cat = await this.create(catDTO.cat)
 
-      if (!cat) {
-        duplicated += 1
-        //next cat from DTO
-        continue
-      }
-
-      //createBreedDTO
-      for (const breedDTO of catDTO.listBreeds) {
-        //if it creates the breed 
-        const breed = await this.breedService.create(breedDTO)
-        //relate both entities
-        if (breed) {
-          await this.breedService.updateRelations(breed.id, cat)
-          this.updateRelations(cat.id, breed)
+        if (!cat) {
+          duplicated += 1
+          //next cat from DTO
+          continue
         }
+
+        //createBreedDTO
+        for (const breedDTO of catDTO.listBreeds) {
+          //if it creates the breed 
+          const breed = await this.breedService.create(breedDTO)
+          //relate both entities
+          if (breed) {
+            await this.breedService.updateRelations(breed.id, cat)
+            this.updateRelations(cat.id, breed)
+          }
+        }
+        created += 1
       }
-      created += 1
-    }
-    const response = new ResponseCreationCatBreedDTO
-    response.create = created
-    response.duplicated = duplicated;
-    return response
+
+      const response = this.mapper.toResponseCreationAPI(created, duplicated)
+      return response
+    } else throw new BadRequestException('value must be positive')
   }
 
   async getAllCats() {
