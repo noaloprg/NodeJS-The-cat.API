@@ -1,3 +1,4 @@
+import { Expose } from "class-transformer";
 import { IsString, MaxLength } from "class-validator";
 
 export class CreateBreedDto {
@@ -14,7 +15,8 @@ export class CreateBreedDto {
     @IsString()
     description: string
 
+    @Expose({ name: 'wikipedia_url' })
     @IsString()
     wikiUrl: string
-    
+
 }
