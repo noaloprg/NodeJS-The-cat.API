@@ -16,7 +16,7 @@ export class BreedService {
   ) { }
 
   async create(createBreedDto: CreateBreedDto) {
-    if (!this.existsByExternalId(createBreedDto.externalId)) {
+    if (!await this.existsByExternalId(createBreedDto.externalId)) {
       const breed = this.mapper.createBreedFromDTO(createBreedDto)
       return await this.repository.save(breed)
     }
@@ -28,9 +28,9 @@ export class BreedService {
   async updateRelations(id: number, cat: Cat) {
     //loads breed with the cats related
     const breed = await this.repository.findOne({
-      where: {id},
+      where: { id },
       relations: ['cats']
-  })
+    })
 
     if (breed) {
       //if its empty creates array 
@@ -40,23 +40,14 @@ export class BreedService {
       this.repository.save(breed)
     }
   }
-  
+
   async findAll() {
     const allBreeds = await this.repository.find()
     return allBreeds.map(b => this.mapper.toResponseDTO(b))
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} breed`;
-  }
-
-
-  remove(id: number) {
-    return `This action removes a #${id} breed`;
-  }
-
-  existsByExternalId(exId: string) {
-    const breed = this.repository.findOneBy({ externalId: exId })
+  async existsByExternalId(exId: string) {
+    const breed = await this.repository.findOneBy({ externalId: exId.toLocaleLowerCase() })
 
     let exists = true
     if (!breed) exists = false
