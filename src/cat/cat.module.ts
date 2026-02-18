@@ -6,12 +6,14 @@ import { Cat } from './entities/cat.entity';
 import { HttpModule } from '@nestjs/axios';
 import { Breed } from 'src/breed/entities/breed.entity';
 import { BreedModule } from 'src/breed/breed.module';
+import { CatMapper } from 'src/common/mappers/cat.mapper';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Cat]),
     HttpModule,
-    BreedModule
+    BreedModule,
+    CatMapper
   ],
   controllers: [CatController],
   providers: [CatService],
