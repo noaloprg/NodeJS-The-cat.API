@@ -11,6 +11,7 @@ export class BreedMapper {
         breed.name = createDTO.name.toLocaleLowerCase().trim()
         breed.temperament = createDTO.temperament
         breed.description = createDTO.description
+        breed.origin = createDTO.origin
         breed.wikiUrl = createDTO.wikiUrl
         return breed
     }
@@ -28,5 +29,17 @@ export class BreedMapper {
         response.origin = breed.origin
         response.temperament = breed.temperament
         return response
+    }
+
+    createDTOfromAPI(apiBody: any) {
+        const breedDTO = new CreateBreedDto()
+        breedDTO.externalId = apiBody.id.toLocaleLowerCase().trim()
+        breedDTO.name = apiBody.name.toLocaleLowerCase().trim()
+        breedDTO.temperament = apiBody.temperament
+        breedDTO.description = apiBody.description
+        breedDTO.wikiUrl = apiBody.wikipedia_url
+        breedDTO.origin = apiBody.origin
+
+        return breedDTO
     }
 }

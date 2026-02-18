@@ -26,4 +26,12 @@ export class CatMapper {
         response.id = cat.id
         return response
     }
+       createDTOFromAPI(apiBody: any) {
+        const createDTO = new CreateCatDto()
+        createDTO.externalId = apiBody.id.toLocaleLowerCase().trim()
+        createDTO.height = apiBody.height
+        createDTO.url = apiBody.url
+        createDTO.width = apiBody.width
+        return createDTO
+    }
 }
