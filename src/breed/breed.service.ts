@@ -3,18 +3,30 @@ import { CreateBreedDto } from './dto/create-breed.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Breed } from './entities/breed.entity';
 import { Repository } from 'typeorm';
+import { BreedMapper } from 'src/common/mappers/breed.mapper';
 
 @Injectable()
 export class BreedService {
   @InjectRepository(Breed)
   private readonly repository: Repository<Breed>
 
-  create(createBreedDto: CreateBreedDto) {
-    return 'This action adds a new breed';
+  constructor(
+    private mapper: BreedMapper
+  ) { }
+
+  async create(createBreedDto: CreateBreedDto) {
+    if (!this.existsByExternalId(createBreedDto.externalId)) {
+      const breed = this.mapper.createBreedFromDTO(createBreedDto)
+      return await this.repository.save(breed)
+    }
+    //returns entity for relations with cat
+    else return null
+    //doesnt throw exception if exists
   }
 
-  findAll() {
-    return `This action returns all breed`;
+  async findAll() {
+    const allBreeds = await this.repository.find()
+    return allBreeds.map(b => this.mapper.toResponseDTO(b))
   }
 
   findOne(id: number) {
