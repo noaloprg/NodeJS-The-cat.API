@@ -36,10 +36,11 @@ export class CatMapper {
         return createDTO
     }
 
-    toResponseCreationAPI(created: number, duplicated: number) {
+    toResponseCreationAPI(created: number, duplicated: number, breedsCreated) {
         const response = new ResponseCreationCatBreedDTO()
         response.create = created
         response.duplicated = duplicated
+        response.breedsCreated = breedsCreated
         return response
     }
 }

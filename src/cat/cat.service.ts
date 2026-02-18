@@ -42,6 +42,7 @@ export class CatService {
     const createDTOs = await this.transformBodyToDTO(bodyAPi);
     let created = 0
     let duplicated = 0
+    let breedsCreated = 0
 
     if (amount > 0) {
       for (const catDTO of createDTOs) {
@@ -62,12 +63,12 @@ export class CatService {
           if (breed) {
             await this.breedService.updateRelations(breed.id, cat)
             this.updateRelations(cat.id, breed)
+            breedsCreated += 1
           }
         }
         created += 1
       }
-
-      const response = this.mapper.toResponseCreationAPI(created, duplicated)
+      const response = this.mapper.toResponseCreationAPI(created, duplicated, breedsCreated)
       return response
     } else throw new BadRequestException('value must be positive')
   }

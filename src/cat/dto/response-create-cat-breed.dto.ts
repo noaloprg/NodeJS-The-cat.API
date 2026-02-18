@@ -1,4 +1,5 @@
-export class ResponseCreationCatBreedDTO{
+export class ResponseCreationCatBreedDTO {
     create: number
-    duplicated : number
+    duplicated: number
+    breedsCreated: number
 }
