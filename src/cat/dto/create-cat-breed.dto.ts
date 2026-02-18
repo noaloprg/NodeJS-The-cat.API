@@ -7,6 +7,6 @@ Creates 1 cat and many breeds at the same time
 */
 export class CreateCatWithBreedDTO {
     //implements validations from those DTOs
-    cat: CreateBreedDto
+    cat: CreateCatDto
     listBreeds: CreateBreedDto[]
 }
