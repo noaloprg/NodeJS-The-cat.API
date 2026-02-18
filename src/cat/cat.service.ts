@@ -12,6 +12,7 @@ import { BreedMapper } from 'src/common/mappers/breed.mapper';
 import { Breed } from 'src/breed/entities/breed.entity';
 import { ResponseCreationCatBreedDTO } from './dto/response-create-cat-breed.dto';
 import { ErrorMessages } from 'src/common/constants/error-messages';
+import { Pet } from 'src/pet/entities/pet.entity';
 
 @Injectable()
 
@@ -80,49 +81,6 @@ export class CatService {
     return this.mapper.toResponseDTO(catDeleted)
   }
 
-  // * transforms response from API into CreateCatBreedDTO
-  private async transformBodyToDTO(bodyApi: any) {
-    // bodyApi -> list of cats (cats -> list of breeds)
-    const catsWithBreeds: CreateCatWithBreedDTO[] = bodyApi.map(
-      //cat from API
-      cat => {
-        const dto = new CreateCatWithBreedDTO()
-
-        //creates CreateCatDTO
-        dto.cat = this.mapper.createDTOFromAPI(cat)
-
-        //if there are breeds
-        if (cat.breeds) {
-          //assigns a list of breeds to the DTO
-          //cat.breeds or empty list in case there are no breeds (UNDIFINED EXCEPTION)
-          dto.listBreeds = (cat.breeds || []).map(b => this.breedMapper.createDTOfromAPI(b))
-        }
-        //creates list of CreateBreedDTO
-        else dto.listBreeds = []
-        return dto
-      })
-    return catsWithBreeds
-  }
-
-  // * CATS + BREEDS RANDOM
-  // amount -> num of cats admin requests
-  private async getCatsFromApi(amount: number) {
-    try {
-      /*
-      tranforms Observable into Promise<AxiosResponse> to access AxiosResponse methods
-      */
-      const apiReponse = await firstValueFrom(this.httpService.get('images/search', {
-        params: { limit: amount, has_breeds: 1 },
-      }))
-      return apiReponse.data;
-    }
-    catch (error) {
-      const status = error?.status || HttpStatus.INTERNAL_SERVER_ERROR;
-      const message = error?.message || 'Error al conectar con Cat API';
-      throw new HttpException(message, status);
-    }
-  }
-
   async existsByExternalId(exId: string) {
     const cat = await this.repository.findOneBy({ externalId: exId.toLocaleLowerCase() })
     let exists = true
@@ -130,6 +88,25 @@ export class CatService {
     return exists
   }
 
+  async findEntityById(idCat: number) {
+    const cat = await this.repository.findOneBy({ id: idCat })
+    if (!cat) throw new NotFoundException(ErrorMessages.notFoundByIdMessage(this.RESOURCE_NAME, idCat))
+    return cat
+  }
+
+  async updateRelationPet(id: number, pet: Pet) {
+    const cat = await this.repository.findOne({
+      where: { id },
+      relations: ['pet']
+    })
+
+    if (cat) {
+      if (!cat.pet) {
+        cat.pet = pet
+        this.repository.save(cat)
+      }
+    }
+  }
 
   private async create(createDTO: CreateCatDto) {
     if (!await this.existsByExternalId(createDTO.externalId)) {
@@ -155,5 +132,47 @@ export class CatService {
       cat.breeds.push(breed)
       await this.repository.save(cat)
     }
+  }
+  // * CATS + BREEDS RANDOM
+  // amount -> num of cats admin requests
+  private async getCatsFromApi(amount: number) {
+    try {
+      /*
+      tranforms Observable into Promise<AxiosResponse> to access AxiosResponse methods
+      */
+      const apiReponse = await firstValueFrom(this.httpService.get('images/search', {
+        params: { limit: amount, has_breeds: 1 },
+      }))
+      return apiReponse.data;
+    }
+    catch (error) {
+      const status = error?.status || HttpStatus.INTERNAL_SERVER_ERROR;
+      const message = error?.message || 'Error al conectar con Cat API';
+      throw new HttpException(message, status);
+    }
+  }
+
+  // * transforms response from API into CreateCatBreedDTO
+  private async transformBodyToDTO(bodyApi: any) {
+    // bodyApi -> list of cats (cats -> list of breeds)
+    const catsWithBreeds: CreateCatWithBreedDTO[] = bodyApi.map(
+      //cat from API
+      cat => {
+        const dto = new CreateCatWithBreedDTO()
+
+        //creates CreateCatDTO
+        dto.cat = this.mapper.createDTOFromAPI(cat)
+
+        //if there are breeds
+        if (cat.breeds) {
+          //assigns a list of breeds to the DTO
+          //cat.breeds or empty list in case there are no breeds (UNDIFINED EXCEPTION)
+          dto.listBreeds = (cat.breeds || []).map(b => this.breedMapper.createDTOfromAPI(b))
+        }
+        //creates list of CreateBreedDTO
+        else dto.listBreeds = []
+        return dto
+      })
+    return catsWithBreeds
   }
 }
