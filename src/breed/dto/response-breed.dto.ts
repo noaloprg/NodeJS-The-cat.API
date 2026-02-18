@@ -9,6 +9,6 @@ export class ResponseBreedDTO {
     description: string
     wikiUrl: string
     createdAt: Date
-    updatedAt: Date
+    updatedAt?: Date | null
     deleteAt?: Date | null
 }

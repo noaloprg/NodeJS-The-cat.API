@@ -8,6 +8,6 @@ export class ResponseUserDTO {
     role: UserType
     language: UserLanguage
     createdAt: Date
-    updatedAt: Date
+    updatedAt?: Date | null
     deletedAt?: Date | null
 }

@@ -27,7 +27,7 @@ export class User {
     createdAt: Date
 
     @UpdateDateColumn({ type: 'timestamptz' })
-    updatedAt: Date
+    updatedAt?: Date | null
 
     @DeleteDateColumn({ type: 'timestamptz', nullable: true })
     deletedAt?: Date | null

@@ -7,6 +7,6 @@ export class ResponseCatDTO {
     width: number
     height: number
     createdAt: Date
-    updatedAt: Date
+    updatedAt?: Date | null
     deleteAt?: Date | null
 }
