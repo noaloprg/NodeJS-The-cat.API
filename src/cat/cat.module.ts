@@ -14,10 +14,9 @@ import { BreedMapper } from 'src/common/mappers/breed.mapper';
     TypeOrmModule.forFeature([Cat]),
     HttpModule,
     BreedModule,
-    CatMapper,
-    BreedMapper
+
   ],
   controllers: [CatController],
-  providers: [CatService],
+  providers: [CatService, CatMapper, BreedMapper],
 })
 export class CatModule { }
