@@ -14,6 +14,7 @@ import { HttpModule } from '@nestjs/axios';
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
+      envFilePath: '.env', 
     }),
 
     TypeOrmModule.forRootAsync({
