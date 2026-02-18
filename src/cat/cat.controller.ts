@@ -20,8 +20,17 @@ export class CatController {
     return await this.catService.createCatBreedFromApi(amount)
   }
 
+  @ApiBearerAuth(BEARER_KEY)
+  @Delete(':id')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserType.ADMIN)
+  @ApiOperation({ summary: 'Elimina gatos de la BD' })
+  async deleteCat(@Param('id') id: number) {
+    return await this.catService.deleteById(id)
+  }
+
   @Get()
-  @ApiOperation({ summary: 'Obtiene todos los gatos de la BBDD' })
+  @ApiOperation({ summary: 'Obtiene todos los gatos de la BD' })
   async getAll() {
     return await this.catService.getAllCats()
   }

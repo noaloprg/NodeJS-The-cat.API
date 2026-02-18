@@ -20,6 +20,7 @@ export class CatMapper {
         const response = new ResponseCatDTO()
         response.createdAt = cat.createdAt
         response.deleteAt = cat.deletedAt
+        response.updatedAt = cat.updatedAt
         response.externalId = cat.externalId
         response.height = cat.height
         response.width = cat.width

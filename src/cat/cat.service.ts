@@ -1,4 +1,4 @@
-import { BadRequestException, HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { BadRequestException, HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateCatDto } from './dto/create-cat.dto';
 import { HttpService } from '@nestjs/axios';
 import { firstValueFrom } from 'rxjs';
@@ -11,6 +11,7 @@ import { CatMapper } from 'src/common/mappers/cat.mapper';
 import { BreedMapper } from 'src/common/mappers/breed.mapper';
 import { Breed } from 'src/breed/entities/breed.entity';
 import { ResponseCreationCatBreedDTO } from './dto/response-create-cat-breed.dto';
+import { ErrorMessages } from 'src/common/constants/error-messages';
 
 @Injectable()
 
@@ -26,15 +27,7 @@ export class CatService {
     private readonly breedMapper: BreedMapper
   ) { }
 
-  async create(createDTO: CreateCatDto) {
-    if (!await this.existsByExternalId(createDTO.externalId)) {
-      const cat = this.mapper.createCatFromDTO(createDTO)
-      return await this.repository.save(cat)
-    }
-    //returns entity for relations with cat
-    else return null
-    //doesnt throw exception if exists
-  }
+  private readonly RESOURCE_NAME = 'cat'
 
   async createCatBreedFromApi(amount: number) {
     //list of cats with list of breeds
@@ -62,7 +55,7 @@ export class CatService {
           //relate both entities
           if (breed) {
             await this.breedService.updateRelations(breed.id, cat)
-            this.updateRelations(cat.id, breed)
+            this.updateRelationBreed(cat.id, breed)
             breedsCreated += 1
           }
         }
@@ -76,6 +69,15 @@ export class CatService {
   async getAllCats() {
     const allCats = await this.repository.find()
     return allCats.map(c => this.mapper.toResponseDTO(c))
+  }
+
+  async deleteById(idCat: number) {
+    //load full entity for DTO 
+    const catRequested = await this.repository.findOneBy({ id: idCat })
+    if (!catRequested) throw new NotFoundException(ErrorMessages.notFoundByIdMessage(this.RESOURCE_NAME, idCat))
+
+    const catDeleted = await this.repository.softRemove(catRequested)
+    return this.mapper.toResponseDTO(catDeleted)
   }
 
   // * transforms response from API into CreateCatBreedDTO
@@ -129,7 +131,17 @@ export class CatService {
   }
 
 
-  async updateRelations(id: number, breed: Breed) {
+  private async create(createDTO: CreateCatDto) {
+    if (!await this.existsByExternalId(createDTO.externalId)) {
+      const cat = this.mapper.createCatFromDTO(createDTO)
+      return await this.repository.save(cat)
+    }
+    //returns entity for relations with cat
+    else return null
+    //doesnt throw exception if exists
+  }
+
+  private async updateRelationBreed(id: number, breed: Breed) {
     //loads cat with the breeds related
     const cat = await this.repository.findOne({
       where: { id },
