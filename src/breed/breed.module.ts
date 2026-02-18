@@ -11,5 +11,6 @@ import { BreedMapper } from 'src/common/mappers/breed.mapper';
   ],
   controllers: [BreedController],
   providers: [BreedService, BreedMapper],
+  exports: [BreedService]
 })
 export class BreedModule { }
