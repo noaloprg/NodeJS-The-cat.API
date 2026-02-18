@@ -8,6 +8,7 @@ import { UserType } from './enums/User-role.enum';
 import { UserMapper } from 'src/common/mappers/user.mapper';
 import { ErrorMessages as ErrorMessages } from 'src/common/constants/error-messages';
 import { Verification } from 'src/verification/entities/verification.entity';
+import { Pet } from 'src/pet/entities/pet.entity';
 
 @Injectable()
 export class UsersService {
@@ -84,7 +85,7 @@ export class UsersService {
     return this.userMapper.toResponseDTO(userDeleted)
   }
 
-  public async checkExistanceByEmail(email: string) {
+  async checkExistanceByEmail(email: string) {
     const userRequested = await this.repository.findOneBy({ mail: email })
 
     if (userRequested) throw new ConflictException(ErrorMessages.mailAlreadyRegistered());
@@ -95,5 +96,22 @@ export class UsersService {
 
     if (!userRequested) throw new NotFoundException(ErrorMessages.notFoundByIdMessage(this.RESOURCE_NAME, idUser));
     return userRequested
+  }
+
+  async updateRelationPet(id: number, pet: Pet) {
+    const user = await this.checkExistanceById(id)
+
+    if (user) {
+      if (user.pets) {
+        user.pets.push(pet)
+        this.repository.save(user)
+      }
+      else {
+        //if its empty pet lists, initialize and then insert new pet
+        user.pets = []
+        user.pets.push(pet)
+        this.repository.save(user)
+      }
+    }
   }
 }
