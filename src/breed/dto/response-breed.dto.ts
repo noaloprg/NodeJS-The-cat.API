@@ -1,6 +1,8 @@
 import { IsString, MaxLength } from "class-validator";
 
 export class ResponseBreedDTO {
+    id: number
+    externalId: string
     name: string
     temperament: string
     origin: string

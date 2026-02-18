@@ -3,6 +3,9 @@ import { IsString, MaxLength } from "class-validator";
 
 export class CreateBreedDto {
     @IsString()
+    externalId: string
+
+    @IsString()
     @MaxLength(25)
     name: string
 
