@@ -10,6 +10,7 @@ import { Repository } from 'typeorm';
 import { CatMapper } from 'src/common/mappers/cat.mapper';
 import { BreedMapper } from 'src/common/mappers/breed.mapper';
 import { Breed } from 'src/breed/entities/breed.entity';
+import { ResponseCreationCatBreedDTO } from './dto/response-create-cat-breed.dto';
 
 @Injectable()
 
@@ -26,7 +27,7 @@ export class CatService {
   ) { }
 
   async create(createDTO: CreateCatDto) {
-    if (!this.existsByExternalId(createDTO.externalId)) {
+    if (!await this.existsByExternalId(createDTO.externalId)) {
       const cat = this.mapper.createCatFromDTO(createDTO)
       return await this.repository.save(cat)
     }
@@ -64,8 +65,16 @@ export class CatService {
       }
       created += 1
     }
+    const response = new ResponseCreationCatBreedDTO
+    response.create = created
+    response.duplicated = duplicated;
+    return response
   }
 
+  async getAllCats() {
+    const allCats = await this.repository.find()
+    return allCats.map(c => this.mapper.toResponseDTO(c))
+  }
 
   // * transforms response from API into CreateCatBreedDTO
   private async transformBodyToDTO(bodyApi: any) {
@@ -81,7 +90,8 @@ export class CatService {
         //if there are breeds
         if (cat.breeds) {
           //assigns a list of breeds to the DTO
-          dto.listBreeds = cat.breed.map(b => this.breedMapper.createDTOfromAPI(b))
+          //cat.breeds or empty list in case there are no breeds (UNDIFINED EXCEPTION)
+          dto.listBreeds = (cat.breeds || []).map(b => this.breedMapper.createDTOfromAPI(b))
         }
         //creates list of CreateBreedDTO
         else dto.listBreeds = []
@@ -97,8 +107,8 @@ export class CatService {
       /*
       tranforms Observable into Promise<AxiosResponse> to access AxiosResponse methods
       */
-      const apiReponse = await firstValueFrom(this.httpService.get('/images/search', {
-        params: { limit: amount }
+      const apiReponse = await firstValueFrom(this.httpService.get('images/search', {
+        params: { limit: amount, has_breeds: 1 },
       }))
       return apiReponse.data;
     }
@@ -109,8 +119,8 @@ export class CatService {
     }
   }
 
-  existsByExternalId(exId: string) {
-    const cat = this.repository.findOneBy({ externalId: exId.toLocaleLowerCase() })
+  async existsByExternalId(exId: string) {
+    const cat = await this.repository.findOneBy({ externalId: exId.toLocaleLowerCase() })
     let exists = true
     if (!cat) exists = false
     return exists
@@ -129,7 +139,7 @@ export class CatService {
       //if its empty creates array 
       if (!cat.breeds) cat.breeds = []
       cat.breeds.push(breed)
-      this.repository.save(cat)
+      await this.repository.save(cat)
     }
   }
 }
