@@ -2,29 +2,92 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateCatDto } from './dto/create-cat.dto';
 import { HttpService } from '@nestjs/axios';
 import { firstValueFrom } from 'rxjs';
+import { CreateCatWithBreedDTO } from './dto/create-cat-breed.dto';
+import { BreedService } from 'src/breed/breed.service';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Cat } from './entities/cat.entity';
+import { Repository } from 'typeorm';
+import { CatMapper } from 'src/common/mappers/cat.mapper';
+import { BreedMapper } from 'src/common/mappers/breed.mapper';
+import { Breed } from 'src/breed/entities/breed.entity';
 
 @Injectable()
 
 export class CatService {
+
+  @InjectRepository(Cat)
+  private readonly repository: Repository<Cat>
+
   constructor(
-    private readonly httpService: HttpService
+    private readonly httpService: HttpService,
+    private readonly breedService: BreedService,
+    private readonly mapper: CatMapper,
+    private readonly breedMapper: BreedMapper
   ) { }
 
-  create(createCatDto: CreateCatDto) {
-    return 'This action adds a new cat';
+  async create(createDTO: CreateCatDto) {
+    if (!this.existsByExternalId(createDTO.externalId)) {
+      const cat = this.mapper.createCatFromDTO(createDTO)
+      return await this.repository.save(cat)
+    }
+    //returns entity for relations with cat
+    else return null
+    //doesnt throw exception if exists
   }
 
-  findAll() {
-    return `This action returns all cat`;
+  async createCatBreedFromApi(amount: number) {
+    //list of cats with list of breeds
+    const bodyAPi = await this.getCatsFromApi(amount)
+    const createDTOs = await this.transformBodyToDTO(bodyAPi);
+    let created = 0
+    let duplicated = 0
+
+    for (const catDTO of createDTOs) {
+      // creates Cat from createCatDTO
+      const cat = await this.create(catDTO.cat)
+
+      if (!cat) {
+        duplicated += 1
+        //next cat from DTO
+        continue
+      }
+
+      //createBreedDTO
+      for (const breedDTO of catDTO.listBreeds) {
+        //if it creates the breed 
+        const breed = await this.breedService.create(breedDTO)
+        //relate both entities
+        if (breed) {
+          await this.breedService.updateRelations(breed.id, cat)
+          this.updateRelations(cat.id, breed)
+        }
+      }
+      created += 1
+    }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} cat`;
-  }
 
+  // * transforms response from API into CreateCatBreedDTO
+  private async transformBodyToDTO(bodyApi: any) {
+    // bodyApi -> list of cats (cats -> list of breeds)
+    const catsWithBreeds: CreateCatWithBreedDTO[] = bodyApi.map(
+      //cat from API
+      cat => {
+        const dto = new CreateCatWithBreedDTO()
 
-  remove(id: number) {
-    return `This action removes a #${id} cat`;
+        //creates CreateCatDTO
+        dto.cat = this.mapper.createDTOFromAPI(cat)
+
+        //if there are breeds
+        if (cat.breeds) {
+          //assigns a list of breeds to the DTO
+          dto.listBreeds = cat.breed.map(b => this.breedMapper.createDTOfromAPI(b))
+        }
+        //creates list of CreateBreedDTO
+        else dto.listBreeds = []
+        return dto
+      })
+    return catsWithBreeds
   }
 
   // * CATS + BREEDS RANDOM
@@ -43,6 +106,30 @@ export class CatService {
       const status = error?.status || HttpStatus.INTERNAL_SERVER_ERROR;
       const message = error?.message || 'Error al conectar con Cat API';
       throw new HttpException(message, status);
+    }
+  }
+
+  existsByExternalId(exId: string) {
+    const cat = this.repository.findOneBy({ externalId: exId.toLocaleLowerCase() })
+    let exists = true
+    if (!cat) exists = false
+    return exists
+  }
+
+
+  async updateRelations(id: number, breed: Breed) {
+    //loads cat with the breeds related
+    const cat = await this.repository.findOne({
+      where: { id },
+      //if not breeds[] is always empty
+      relations: ['breeds']
+    })
+
+    if (cat) {
+      //if its empty creates array 
+      if (!cat.breeds) cat.breeds = []
+      cat.breeds.push(breed)
+      this.repository.save(cat)
     }
   }
 }
