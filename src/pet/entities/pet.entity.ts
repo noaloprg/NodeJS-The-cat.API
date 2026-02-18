@@ -21,7 +21,7 @@ export class Pet {
     deletedAt?: Date | null
 
     //if user is deleted, owner is Null
-    @ManyToOne(() => User, (u) => u.pets, { onDelete: "SET NULL" })
+    @ManyToOne(() => User, (u) => u.pets, { onDelete: "SET NULL", nullable:  true})
     @JoinColumn({ name: 'ownerId' })
     owner: User
 
