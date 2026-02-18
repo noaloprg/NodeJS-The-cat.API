@@ -4,12 +4,12 @@ import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { UsersModule } from './users/users.module';
-import { UsersController } from './users/users.controller';
 import { VerificationModule } from './verification/verification.module';
 import { AuthModule } from './auth/auth.module';
 import { PetModule } from './pet/pet.module';
 import { CatModule } from './cat/cat.module';
 import { BreedModule } from './breed/breed.module';
+import { HttpModule } from '@nestjs/axios';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -27,11 +27,23 @@ import { BreedModule } from './breed/breed.module';
         database: `db_${configService.get('APP_NAME')}`,
         autoLoadEntities: true,
         //when changes in Entities are made, all tables are created as new
-       // dropSchema:true,
+        // dropSchema:true,
         synchronize: true
       }),
       inject: [ConfigService]
     }),
+
+    HttpModule.registerAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
+        baseURL: configService.get('BASE_URL'),
+        headers: {
+          'x-api-key': configService.get('CAT_API_KEY')
+        },
+      })
+    })
+    ,
 
     UsersModule,
 
