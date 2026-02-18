@@ -1,8 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { CreateCatDto } from './dto/create-cat.dto';
+import { HttpService } from '@nestjs/axios';
 
 @Injectable()
 export class CatService {
+  constructor(
+    private readonly httpService: HttpService
+  ) { }
   create(createCatDto: CreateCatDto) {
     return 'This action adds a new cat';
   }
