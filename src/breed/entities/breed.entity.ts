@@ -21,8 +21,8 @@ export class Breed {
     @Column()
     description: string
 
-    @Column({ type: 'text', nullable: true })
-    wikiUrl?: string | null
+    @Column({ type: 'varchar', nullable: true })
+    wikiUrl: string | null
 
     @CreateDateColumn({ type: 'timestamptz' })
     createdAt: Date
