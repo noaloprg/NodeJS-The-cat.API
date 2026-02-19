@@ -7,7 +7,7 @@ export class ResponseBreedDTO {
     temperament: string
     origin: string
     description: string
-    wikiUrl: string
+    wikiUrl?: string | null
     createdAt: Date
     updatedAt?: Date | null
     deleteAt?: Date | null

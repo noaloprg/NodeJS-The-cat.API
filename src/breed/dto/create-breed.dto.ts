@@ -20,6 +20,6 @@ export class CreateBreedDto {
 
     @Expose({ name: 'wikipedia_url' })
     @IsString()
-    wikiUrl: string
+    wikiUrl?: string | null
 
 }

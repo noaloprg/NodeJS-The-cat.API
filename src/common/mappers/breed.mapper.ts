@@ -12,7 +12,7 @@ export class BreedMapper {
         breed.temperament = createDTO.temperament
         breed.description = createDTO.description
         breed.origin = createDTO.origin
-        breed.wikiUrl = createDTO.wikiUrl
+        breed.wikiUrl = createDTO.wikiUrl ?? null
         return breed
     }
 
