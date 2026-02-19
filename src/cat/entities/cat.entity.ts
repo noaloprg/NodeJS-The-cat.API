@@ -30,7 +30,7 @@ export class Cat {
     deletedAt?: Date | null
 
     @OneToOne(() => Pet, (p) => p.cat)
-    pet: Pet
+    pet?: Pet | null
 
     @ManyToMany(() => Breed, (b) => b.cats)
     @JoinTable({name: 'cat_breeds'})

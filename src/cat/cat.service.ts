@@ -10,9 +10,7 @@ import { Repository } from 'typeorm';
 import { CatMapper } from 'src/common/mappers/cat.mapper';
 import { BreedMapper } from 'src/common/mappers/breed.mapper';
 import { Breed } from 'src/breed/entities/breed.entity';
-import { ResponseCreationCatBreedDTO } from './dto/response-create-cat-breed.dto';
 import { ErrorMessages } from 'src/common/constants/error-messages';
-import { Pet } from 'src/pet/entities/pet.entity';
 
 @Injectable()
 
@@ -55,12 +53,12 @@ export class CatService {
           const breed = await this.breedService.create(breedDTO)
           //relate both entities
           if (breed) {
-            await this.breedService.updateRelations(breed.id, cat)
-            this.updateRelationBreed(cat.id, breed)
+            this.addBreeds(cat, breed)
             breedsCreated += 1
           }
         }
         created += 1
+        await this.repository.save(cat)
       }
       const response = this.mapper.toResponseCreationAPI(created, duplicated, breedsCreated)
       return response
@@ -68,7 +66,9 @@ export class CatService {
   }
 
   async getAllCats() {
-    const allCats = await this.repository.find()
+    const allCats = await this.repository.find({
+      relations: ['breeds']
+    })
     return allCats.map(c => this.mapper.toResponseDTO(c))
   }
 
@@ -94,21 +94,11 @@ export class CatService {
     return cat
   }
 
-  async updateRelationPet(id: number, pet: Pet) {
-    const cat = await this.repository.findOne({
-      where: { id },
-      relations: ['pet']
-    })
-
-    if (cat) {
-      if (!cat.pet) {
-        cat.pet = pet
-        this.repository.save(cat)
-      }
-    }
-    else throw new NotFoundException(ErrorMessages.notFoundByIdMessage(this.RESOURCE_NAME, id))
+  // ! PRUEBAS
+  async deleteAll(){
+    return this.repository.deleteAll()
   }
-
+  
   private async create(createDTO: CreateCatDto) {
     if (!await this.existsByExternalId(createDTO.externalId)) {
       const cat = this.mapper.createCatFromDTO(createDTO)
@@ -119,20 +109,15 @@ export class CatService {
     //doesnt throw exception if exists
   }
 
-  private async updateRelationBreed(id: number, breed: Breed) {
-    //loads cat with the breeds related
-    const cat = await this.repository.findOne({
-      where: { id },
-      //if not breeds[] is always empty
-      relations: ['breeds']
-    })
+  private addBreeds(cat: Cat, breed: Breed) {
+    //if its empty creates array 
+    if (!cat.breeds) cat.breeds = []
 
-    if (cat) {
-      //if its empty creates array 
-      if (!cat.breeds) cat.breeds = []
-      cat.breeds.push(breed)
-      await this.repository.save(cat)
+    //checks if that breed is into the cat
+    if (!cat.breeds.some(b => b.id === breed.id)) {
+      cat.breeds.push(breed);
     }
+
   }
   // * CATS + BREEDS RANDOM
   // amount -> num of cats admin requests
