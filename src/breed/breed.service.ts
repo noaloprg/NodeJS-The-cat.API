@@ -14,16 +14,19 @@ export class BreedService {
     private mapper: BreedMapper
   ) { }
 
-  async create(createBreedDto: CreateBreedDto) {
+  async create(createBreedDto: CreateBreedDto): Promise<[Breed, boolean]> {
     const breedRequested = await this.existsByExternalId(createBreedDto.externalId)
+    let created = false
+
     //if it doesnt exists it creates it
     if (!breedRequested) {
       const breed = this.mapper.createBreedFromDTO(createBreedDto)
-      return await this.repository.save(breed)
+      created = true
+      return [await this.repository.save(breed), created]
     }
     //for relating with cat, it returnse the breed
-    else return breedRequested
-    
+    else return [breedRequested, created]
+
   }
 
   async findAll() {
@@ -38,10 +41,4 @@ export class BreedService {
     if (!breed) return null
     return breed
   }
-
-  //! PRUEBAS
-  async deleteAll() {
-    return this.repository.deleteAll()
-  }
-
 }

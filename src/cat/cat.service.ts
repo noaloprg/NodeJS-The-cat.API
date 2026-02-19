@@ -49,12 +49,16 @@ export class CatService {
 
         //createBreedDTO
         for (const breedDTO of catDTO.listBreeds) {
+          const tupleBreedBoolean = await this.breedService.create(breedDTO)
+          //tuple for response 
+          const [breed, isCreated] = tupleBreedBoolean
+
           //if it creates the breed 
-          const breed = await this.breedService.create(breedDTO)
-          //relate both entities
           if (breed) {
+            //relate both entities
             this.addBreeds(cat, breed)
-            breedsCreated += 1
+
+            if (isCreated) breedsCreated += 1
           }
         }
         created += 1
@@ -94,11 +98,6 @@ export class CatService {
     return cat
   }
 
-  // ! PRUEBAS
-  async deleteAll(){
-    return this.repository.deleteAll()
-  }
-  
   private async create(createDTO: CreateCatDto) {
     if (!await this.existsByExternalId(createDTO.externalId)) {
       const cat = this.mapper.createCatFromDTO(createDTO)
