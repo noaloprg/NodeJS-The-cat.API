@@ -35,12 +35,13 @@ export class PetService {
       const pet = await this.createSimplePet(user, cat, createPetDto.petName)
 
       //relations WITH pet 
-      this.userService.updateRelationPet(user.id, pet)
-      this.catService.updateRelationPet(cat.id, pet)
+      await this.userService.updateRelationPet(user.id, pet)
+      await this.catService.updateRelationPet(cat.id, pet)
 
       //relactions OF pet
-      this.updateRelationCat(pet.id, cat)
-      this.updateRelationUser(pet.id, user)
+      await this.updateRelationCat(pet.id, cat)
+      await this.updateRelationUser(pet.id, user)
+      return await this.mapper.toResponseDTO(pet)
     }
   }
 
@@ -51,6 +52,7 @@ export class PetService {
     if (pet) {
       if (!pet.cat) {
         pet.cat = cat
+        await this.repository.save(pet)
       }
       else throw new BadRequestException('This cat is already a pet')
     }
@@ -64,6 +66,7 @@ export class PetService {
     if (pet) {
       if (!pet.owner) {
         pet.owner = user
+        await this.repository.save(pet)
       }
       else throw new BadRequestException('This pet has already a owner')
     }

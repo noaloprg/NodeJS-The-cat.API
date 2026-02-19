@@ -3,5 +3,5 @@ import { ResponseUserDTO } from "./response-user.dto";
 
 export class ResponseUserPetDTO {
     user: ResponseUserDTO
-    pet: ResponsePetDTO[]
+    pets: ResponsePetDTO[]
 }

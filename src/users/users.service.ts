@@ -107,13 +107,13 @@ export class UsersService {
     if (user) {
       if (user.pets) {
         user.pets.push(pet)
-        this.repository.save(user)
+        await this.repository.save(user)
       }
       else {
         //if its empty pet lists, initialize and then insert new pet
         user.pets = []
         user.pets.push(pet)
-        this.repository.save(user)
+        await this.repository.save(user)
       }
     }
   }

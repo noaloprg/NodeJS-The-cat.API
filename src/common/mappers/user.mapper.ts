@@ -50,7 +50,7 @@ export class UserMapper {
     toResponseUserPetDTO(user: User) {
         const response = new ResponseUserPetDTO()
         response.user = this.toResponseDTO(user)
-        response.pet = (user.pets || []).map(pet => this.petMapper.toResponseDTO(pet))
+        response.pets = (user.pets || []).map(pet => this.petMapper.toResponseDTO(pet))
         return response
     }
 }
