@@ -4,7 +4,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Breed } from './entities/breed.entity';
 import { Repository } from 'typeorm';
 import { BreedMapper } from 'src/common/mappers/breed.mapper';
-import { Cat } from 'src/cat/entities/cat.entity';
 
 @Injectable()
 export class BreedService {
@@ -16,29 +15,15 @@ export class BreedService {
   ) { }
 
   async create(createBreedDto: CreateBreedDto) {
-    if (!await this.existsByExternalId(createBreedDto.externalId)) {
+    const breedRequested = await this.existsByExternalId(createBreedDto.externalId)
+    //if it doesnt exists it creates it
+    if (!breedRequested) {
       const breed = this.mapper.createBreedFromDTO(createBreedDto)
       return await this.repository.save(breed)
     }
-    //returns entity for relations with cat
-    else return null
-    //doesnt throw exception if exists
-  }
-
-  async updateRelations(id: number, cat: Cat) {
-    //loads breed with the cats related
-    const breed = await this.repository.findOne({
-      where: { id },
-      relations: ['cats']
-    })
-
-    if (breed) {
-      //if its empty creates array 
-      if (!breed.cats) breed.cats = []
-
-      breed.cats.push(cat)
-      this.repository.save(breed)
-    }
+    //for relating with cat, it returnse the breed
+    else return breedRequested
+    
   }
 
   async findAll() {
@@ -46,11 +31,17 @@ export class BreedService {
     return allBreeds.map(b => this.mapper.toResponseDTO(b))
   }
 
+  //always returns a breed
   async existsByExternalId(exId: string) {
     const breed = await this.repository.findOneBy({ externalId: exId.toLocaleLowerCase() })
 
-    let exists = true
-    if (!breed) exists = false
-    return exists
+    if (!breed) return null
+    return breed
   }
+
+  //! PRUEBAS
+  async deleteAll() {
+    return this.repository.deleteAll()
+  }
+
 }
