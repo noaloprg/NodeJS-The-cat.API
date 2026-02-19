@@ -45,9 +45,7 @@ export class UsersService {
   }
 
   async findOne(idUser: number) {
-    const user = await this.checkExistanceById(idUser)
-
-
+    const user = await this.getById(idUser)
     return this.userMapper.toResponseDTO(user)
   }
 
@@ -66,7 +64,7 @@ export class UsersService {
   }
 
   async update(idUser: number, updateUserDto: UpdateUserDto) {
-    const userRequested = await this.checkExistanceById(idUser)
+    const userRequested = await this.getById(idUser)
 
     //user with new update values
     const userUpdated = this.userMapper.updateUserFromDTO(userRequested, updateUserDto)
@@ -77,7 +75,7 @@ export class UsersService {
   }
 
   async remove(idUser: number) {
-    const userRequested = await this.checkExistanceById(idUser)
+    const userRequested = await this.getById(idUser)
 
     //role validation for Delete
     if (userRequested.role == UserType.ADMIN) throw new ForbiddenException(`Users with Admin role cannot be deleted`)
@@ -87,13 +85,13 @@ export class UsersService {
     return this.userMapper.toResponseDTO(userDeleted)
   }
 
-  async checkExistanceByEmail(email: string) {
+  async getByEmail(email: string) {
     const userRequested = await this.repository.findOneBy({ mail: email })
 
     if (userRequested) throw new ConflictException(ErrorMessages.alreadyRegistered('mail'));
 
   }
-  async checkExistanceById(idUser: number) {
+  async getById(idUser: number) {
     const userRequested = await this.repository.findOneBy({ id: idUser })
 
     if (!userRequested) throw new NotFoundException(ErrorMessages.notFoundByIdMessage(this.RESOURCE_NAME, idUser));
