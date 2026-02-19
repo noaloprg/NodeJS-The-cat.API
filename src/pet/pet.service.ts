@@ -8,6 +8,7 @@ import { PetMapper } from 'src/common/mappers/pet.mapper';
 import { UsersService } from 'src/users/users.service';
 import { CatService } from 'src/cat/cat.service';
 import { ErrorMessages } from 'src/common/constants/error-messages';
+import { map } from 'rxjs';
 
 @Injectable()
 export class PetService {
@@ -29,7 +30,7 @@ export class PetService {
     //validates cat  exists
     const cat = await this.catService.findEntityById(createPetDto.animalId)
     //verifies that the cat is not a pet
-    this.checkExistanceCat(cat.id)
+    await this.checkExistanceCat(cat.id)
 
     const pet = await this.repository.create({
       petName: createPetDto.petName,
@@ -40,10 +41,31 @@ export class PetService {
     await this.repository.save(pet)
     return await this.mapper.toResponseDTO(pet)
   }
-  private async checkExistanceCat(animalId: number) {
-    //list insisde a list
-    const petRequested = await this.repository.findOneBy({ cat: { id: animalId } })
-    if (petRequested) throw new ConflictException(ErrorMessages.alreadyRegistered('pet'))
+
+  async getAllUserPets(idUser: number) {
+    const pets = await this.repository.find({
+      where: { owner: { id: idUser } },
+      relations: ['cat']
+    })
+    return pets.map(p => this.mapper.toResponseDTO(p))
   }
 
+  async freePet(idUser: number, idPet: number) {
+    const pet = await this.repository.findOne({
+      where: { owner: { id: idUser }, id: idPet },
+      relations: ['cat']
+    })
+    if (!pet) throw new NotFoundException('Pet with that owner not found')
+    pet.owner = null
+    this.repository.save(pet)
+    return this.mapper.toResponseDTO(pet)
+  }
+
+  private async checkExistanceCat(animalId: number) {
+    //list insisde a list
+    const petRequested = await this.repository.findOne({
+      where: { cat: { id: animalId } }
+    })
+    if (petRequested) throw new ConflictException(ErrorMessages.alreadyRegistered('pet'))
+  }
 }

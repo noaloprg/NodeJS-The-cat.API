@@ -23,7 +23,7 @@ export class Pet {
     //if user is deleted, owner is Null
     @ManyToOne(() => User, (u) => u.pets, { onDelete: "SET NULL", nullable:  true})
     @JoinColumn({ name: 'ownerId' })
-    owner: User
+    owner?: User | null
 
     //if no cat no pet
     @OneToOne(() => Cat, (c) => c.pet, { onDelete: "CASCADE" })
