@@ -26,7 +26,7 @@ export class PetService {
   //userId comes from @Req in controller
   async createPetRelated(createPetDto: CreatePetDto, userId: number) {
     //validates user exists
-    const user = await this.userService.checkExistanceById(userId)
+    const user = await this.userService.getById(userId)
     //validates cat  exists
     const cat = await this.catService.findEntityById(createPetDto.animalId)
     //verifies that the cat is not a pet
@@ -51,14 +51,49 @@ export class PetService {
   }
 
   async freePet(idUser: number, idPet: number) {
-    const pet = await this.repository.findOne({
-      where: { owner: { id: idUser }, id: idPet },
-      relations: ['cat']
-    })
-    if (!pet) throw new NotFoundException('Pet with that owner not found')
+    const pet = await this.findPetbyOwner(idUser, idPet)
     pet.owner = null
     this.repository.save(pet)
     return this.mapper.toResponseDTO(pet)
+  }
+
+  async getAllPets() {
+    return (await this.repository.find(
+      { relations: ['owner'] }
+    )).map(p => this.mapper.toResponseDTO(p))
+  }
+
+  async adoptPet(idUser: number, idPet: number) {
+    //verifies if pet and user exists
+    const pet = await this.getById(idPet)
+    const user = await this.userService.getById(idUser)
+
+    //verifies that pet is orphan
+    if (!pet.owner) {
+      pet.owner = user
+      await this.repository.save(pet)
+    }
+    else throw new ConflictException('Pet belongs to another owner')
+    return this.mapper.toResponseDTO(pet)
+  }
+
+  private async findPetbyOwner(idUser: number, idPet: number) {
+    const pet = await this.repository.findOne({
+      where: { owner: { id: idUser }, id: idPet },
+      relations: ['cat', 'owner']
+    })
+
+    if (!pet) throw new NotFoundException('Pet with that owner not found')
+    return pet
+  }
+  private async getById(idPet: number) {
+    const pet = await this.repository.findOne({
+      where: { id: idPet },
+      relations: ['cat', 'owner']
+    })
+
+    if (!pet) throw new NotFoundException(ErrorMessages.notFoundByIdMessage(this.ENTITY_NAME, idPet))
+    return pet
   }
 
   private async checkExistanceCat(animalId: number) {
