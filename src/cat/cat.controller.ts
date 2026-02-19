@@ -7,22 +7,21 @@ import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guards/role.guard';
 import { BEARER_KEY } from 'src/common/constants/keys';
 
+//global because its used in all endpoints
+@ApiBearerAuth(BEARER_KEY)
+@UseGuards(JwtAuthGuard, RolesGuard)
 @Controller('cat')
 export class CatController {
   constructor(private readonly catService: CatService) { }
 
-  @ApiBearerAuth(BEARER_KEY)
   @Get('api:amount')
-  @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserType.ADMIN)
   @ApiOperation({ summary: 'Obtiene gatos de The Cat API' })
   async getCats(@Param('amount') amount: number = 1) {
     return await this.catService.createCatBreedFromApi(amount)
   }
 
-  @ApiBearerAuth(BEARER_KEY)
   @Delete(':id')
-  @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserType.ADMIN)
   @ApiOperation({ summary: 'Elimina gatos de la BD' })
   async deleteCat(@Param('id') id: number) {
@@ -30,6 +29,7 @@ export class CatController {
   }
 
   @Get()
+  @Roles(UserType.ADMIN, UserType.USER)
   @ApiOperation({ summary: 'Obtiene todos los gatos de la BD' })
   async getAll() {
     return await this.catService.getAllCats()

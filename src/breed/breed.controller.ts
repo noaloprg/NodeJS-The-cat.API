@@ -7,13 +7,13 @@ import { RolesGuard } from 'src/auth/guards/role.guard';
 import { Roles } from 'src/common/decorators/role.decorator';
 import { UserType } from 'src/users/enums/User-role.enum';
 
+@ApiBearerAuth(BEARER_KEY)
+@UseGuards(JwtAuthGuard, RolesGuard)
+@Roles(UserType.ADMIN)
 @Controller('breed')
 export class BreedController {
   constructor(private readonly breedService: BreedService) { }
 
-  @ApiBearerAuth(BEARER_KEY)
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserType.ADMIN)
   @ApiOperation({ summary: 'Obtiene todas las razas de la BBDD' })
   @Get()
   async getAll() {

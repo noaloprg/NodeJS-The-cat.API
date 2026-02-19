@@ -11,11 +11,12 @@ import { UserType } from 'src/users/enums/User-role.enum';
 
 @Controller('pet')
 @UseGuards(JwtAuthGuard, RolesGuard)
+@ApiBearerAuth(BEARER_KEY)
+
 export class PetController {
   constructor(private readonly petService: PetService) { }
 
   //* Assigning pet to user
-  @ApiBearerAuth(BEARER_KEY)
   @Roles(UserType.ADMIN, UserType.USER)
   @Post('user/assign')
   @ApiOperation({ summary: 'Usuario se asigna un pet de la BD' })
@@ -26,7 +27,6 @@ export class PetController {
   }
 
   //* see all pets from actual user authorized
-  @ApiBearerAuth(BEARER_KEY)
   @Roles(UserType.USER, UserType.ADMIN)
   @Get('/user/pets')
   @ApiOperation({ summary: 'Usuario ve todos los pets que tiene' })
@@ -36,7 +36,6 @@ export class PetController {
   }
 
   // * free pet for others to adopt it
-  @ApiBearerAuth(BEARER_KEY)
   @Roles(UserType.USER)
   @Patch('/user/free/:idPet')
   @ApiOperation({ summary: 'Usuario libera mascota de su propiedad' })
@@ -46,7 +45,6 @@ export class PetController {
   }
 
   // * user adopts an existance pet 
-  @ApiBearerAuth(BEARER_KEY)
   @Roles(UserType.USER, UserType.ADMIN)
   @Patch('/user/adopt/:idPet')
   @ApiOperation({ summary: 'Usuario adopta una mascota sin dueño' })
@@ -56,7 +54,6 @@ export class PetController {
   }
 
   // * see all pets 
-  @ApiBearerAuth(BEARER_KEY)
   @Roles(UserType.USER, UserType.ADMIN)
   @Get()
   @ApiOperation({ summary: 'Lista todas las mascotas ya existentes' })
@@ -64,7 +61,6 @@ export class PetController {
     return this.petService.getAllPets()
   }
 
-  @ApiBearerAuth(BEARER_KEY)
   @Roles(UserType.ADMIN)
   @Patch('remove-owner/:idPet')
   @ApiOperation({ summary: 'libera una mascota de un propietario' })
