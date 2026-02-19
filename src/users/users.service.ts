@@ -39,7 +39,7 @@ export class UsersService {
 
   async findAll() {
     const usersArray = await this.repository.find()
-    return usersArray.map(user => this.userMapper.toResponseDTO(user))
+    return usersArray.map(user => this.userMapper.toResponseUserPetDTO(user))
   }
 
   async findOne(idUser: number) {
