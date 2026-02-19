@@ -7,7 +7,7 @@ import { User } from "src/users/entities/user.entity";
 
 @Injectable()
 export class PetMapper {
-    createPet(owner : User, cat :Cat, name:string) {
+    createPet(owner: User, cat: Cat, name: string) {
         const pet = new Pet()
         pet.cat = cat
         pet.owner = owner
@@ -21,8 +21,9 @@ export class PetMapper {
         response.deleteAt = pet.deletedAt
         response.updatedAt = pet.updatedAt
         response.id = pet.id
-        response.ownerId = pet.owner.id
-        response.animalId = pet.cat.id
+        response.petName = pet.petName
+        response.ownerId = pet.owner?.id
+        response.animalId = pet.cat?.id
         return response
     }
 }
