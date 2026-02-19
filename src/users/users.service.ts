@@ -99,7 +99,10 @@ export class UsersService {
   }
 
   async updateRelationPet(id: number, pet: Pet) {
-    const user = await this.checkExistanceById(id)
+    const user = await this.repository.findOne({
+      where: { id },
+      relations: ['pets']
+    })
 
     if (user) {
       if (user.pets) {

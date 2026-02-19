@@ -106,6 +106,7 @@ export class CatService {
         this.repository.save(cat)
       }
     }
+    else throw new NotFoundException(ErrorMessages.notFoundByIdMessage(this.RESOURCE_NAME, id))
   }
 
   private async create(createDTO: CreateCatDto) {
