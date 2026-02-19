@@ -40,7 +40,7 @@ export class AuthService {
         verifies if user exists before saving it into 'verification' table 
         for consistency between verification - user
         */
-        await this.userService.checkExistanceByEmail(registerDTO.targetEmail)
+        await this.userService.getByEmail(registerDTO.targetEmail)
 
         const verifiTemp = this.mapper.createVerificationFromDTO(registerDTO)
         //service returns repsonse DTO

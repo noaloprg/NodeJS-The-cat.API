@@ -34,10 +34,4 @@ export class CatController {
   async getAll() {
     return await this.catService.getAllCats()
   }
-
-  // !PRUEBAS
-  @Delete()
-  async delete() {
-    return this.catService.deleteAll()
-  }
 }

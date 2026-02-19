@@ -12,6 +12,7 @@ import { BEARER_KEY } from 'src/common/constants/keys';
 //key from .addBearerAuth() in swaggerConfig (main.ts)
 @ApiBearerAuth(BEARER_KEY)
 @UseGuards(JwtAuthGuard, RolesGuard)
+//only access to ADMIN
 @Roles(UserType.ADMIN)
 @Controller('users')
 export class UsersController {

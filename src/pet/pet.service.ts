@@ -77,6 +77,12 @@ export class PetService {
     return this.mapper.toResponseDTO(pet)
   }
 
+  async removePetFromUser(idPet: number) {
+    const pet = await this.getById(idPet)
+    pet.owner = null
+    return this.mapper.toResponseDTO(await this.repository.save(pet))
+  }
+
   private async findPetbyOwner(idUser: number, idPet: number) {
     const pet = await this.repository.findOne({
       where: { owner: { id: idUser }, id: idPet },
@@ -86,6 +92,7 @@ export class PetService {
     if (!pet) throw new NotFoundException('Pet with that owner not found')
     return pet
   }
+
   private async getById(idPet: number) {
     const pet = await this.repository.findOne({
       where: { id: idPet },

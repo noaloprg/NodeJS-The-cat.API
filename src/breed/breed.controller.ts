@@ -19,10 +19,4 @@ export class BreedController {
   async getAll() {
     return await this.breedService.findAll()
   }
-
-  // ! PRUEBAS
-  @Delete()
-  async delete() {
-    return this.breedService.deleteAll()
-  }
 }
