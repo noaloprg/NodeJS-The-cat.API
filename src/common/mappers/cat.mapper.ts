@@ -26,6 +26,8 @@ export class CatMapper {
         response.width = cat.width
         response.url = cat.url
         response.id = cat.id
+        response.petId = cat.pet?.id
+        response.breedsId = (cat.breeds || []).map(br => br.id)
         return response
     }
     createDTOFromAPI(apiBody: any) {
