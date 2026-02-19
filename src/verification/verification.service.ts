@@ -20,7 +20,7 @@ export class VerificationService {
   async create(createVerificationDto: CreateVerificationDto) {
     //checks existance 
     const verificationExists = await this.repository.exists({ where: { targetEmail: createVerificationDto.targetEmail } })
-    if (verificationExists) throw new ConflictException(ErrorMessages.mailAlreadyRegistered());
+    if (verificationExists) throw new ConflictException(ErrorMessages.alreadyRegistered('mail'));
 
     //creates entity
     let verificationTemp = this.mapper.createVerificationFromDTO(createVerificationDto)

@@ -9,7 +9,7 @@ export class ErrorMessages {
         return `${resource} with ${property} ${value} was not founded`
     }
 
-    static mailAlreadyRegistered(){
-        return `mail is already registered`
+    static alreadyRegistered(registered: string) {
+        return `${registered} is already registered`
     }
 }

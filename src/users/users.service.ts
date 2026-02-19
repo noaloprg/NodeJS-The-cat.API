@@ -25,7 +25,7 @@ export class UsersService {
     const userExist = await this.repository.exists({ where: { mail: tempUser.mail } })
 
     if (userExist)
-      throw new ConflictException(ErrorMessages.mailAlreadyRegistered());
+      throw new ConflictException(ErrorMessages.alreadyRegistered('mail'));
 
     const userCreated = await this.repository.save(tempUser)
     return this.userMapper.toResponseDTO(userCreated)
@@ -88,7 +88,7 @@ export class UsersService {
   async checkExistanceByEmail(email: string) {
     const userRequested = await this.repository.findOneBy({ mail: email })
 
-    if (userRequested) throw new ConflictException(ErrorMessages.mailAlreadyRegistered());
+    if (userRequested) throw new ConflictException(ErrorMessages.alreadyRegistered('mail'));
 
   }
   async checkExistanceById(idUser: number) {
