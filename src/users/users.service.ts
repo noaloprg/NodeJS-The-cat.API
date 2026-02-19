@@ -38,7 +38,9 @@ export class UsersService {
   }
 
   async findAll() {
-    const usersArray = await this.repository.find()
+    const usersArray = await this.repository.find({
+      relations: ['pets']
+    })
     return usersArray.map(user => this.userMapper.toResponseUserPetDTO(user))
   }
 
@@ -98,23 +100,15 @@ export class UsersService {
     return userRequested
   }
 
-  async updateRelationPet(id: number, pet: Pet) {
-    const user = await this.repository.findOne({
-      where: { id },
-      relations: ['pets']
-    })
+  // ? No se usa 
+  /* 
+  async addPets(user: User, pet: Pet) {
+    if (!user.pets) user.pets = []
 
-    if (user) {
-      if (user.pets) {
-        user.pets.push(pet)
-        await this.repository.save(user)
-      }
-      else {
-        //if its empty pet lists, initialize and then insert new pet
-        user.pets = []
-        user.pets.push(pet)
-        await this.repository.save(user)
-      }
+    //checks that the pet is not alredy assigned to him
+    if (!user.pets.some(p => p.id === pet.id)) {
+      user.pets.push(pet)
     }
   }
+    */
 }
