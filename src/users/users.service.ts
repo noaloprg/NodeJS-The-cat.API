@@ -1,4 +1,4 @@
-import { ConflictException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ConflictException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -9,6 +9,7 @@ import { UserMapper } from 'src/common/mappers/user.mapper';
 import { ErrorMessages as ErrorMessages } from 'src/common/constants/error-messages';
 import { Verification } from 'src/verification/entities/verification.entity';
 import { Pet } from 'src/pet/entities/pet.entity';
+import { isEmail } from 'class-validator';
 
 @Injectable()
 export class UsersService {
@@ -39,7 +40,7 @@ export class UsersService {
 
   async findAll() {
     const usersArray = await this.repository.find({
-      relations: ['pets', 'pets.animalId']
+      relations: ['pets', 'pets.cat']
     })
     return usersArray.map(user => this.userMapper.toResponseUserPetDTO(user))
   }
@@ -50,7 +51,9 @@ export class UsersService {
   }
 
   async findOneByMail(mail: string) {
-    const user = await this.repository.findOneBy({ mail: mail })
+    if (!isEmail(mail)) throw new BadRequestException('Mail must be with mail format')
+      
+    const user = await this.repository.findOneBy({ mail: mail.toLocaleLowerCase() })
     if (!user) throw new NotFoundException(ErrorMessages.notFoundByStringMessage(this.RESOURCE_NAME, 'mail', mail));
 
     return this.userMapper.toResponseDTO(user)
