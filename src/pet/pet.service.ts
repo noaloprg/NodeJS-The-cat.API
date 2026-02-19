@@ -3,7 +3,7 @@ import { CreatePetDto } from './dto/create-pet.dto';
 import { UpdatePetDto } from './dto/update-pet.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Pet } from './entities/pet.entity';
-import { Repository } from 'typeorm';
+import { IsNull, Repository } from 'typeorm';
 import { PetMapper } from 'src/common/mappers/pet.mapper';
 import { UsersService } from 'src/users/users.service';
 import { CatService } from 'src/cat/cat.service';
@@ -58,9 +58,11 @@ export class PetService {
   }
 
   async getAllPets() {
-    return (await this.repository.find(
+    const pets = (await this.repository.find(
       { relations: ['owner'] }
-    )).map(p => this.mapper.toResponseDTO(p))
+    ))
+
+    return pets.filter(p => p.owner === null).map(p => this.mapper.toResponseDTO(p))
   }
 
   async adoptPet(idUser: number, idPet: number) {

@@ -36,7 +36,7 @@ export class PetController {
   }
 
   // * free pet for others to adopt it
-  @Roles(UserType.USER)
+  @Roles(UserType.USER, UserType.ADMIN)
   @Patch('/user/free/:idPet')
   @ApiOperation({ summary: 'Usuario libera mascota de su propiedad' })
   async freePet(@Req() req: any, @Param('idPet') idPet: number) {
@@ -56,7 +56,7 @@ export class PetController {
   // * see all pets 
   @Roles(UserType.USER, UserType.ADMIN)
   @Get()
-  @ApiOperation({ summary: 'Lista todas las mascotas ya existentes' })
+  @ApiOperation({ summary: 'Lista todas las mascotas sin dueño' })
   async getAll() {
     return this.petService.getAllPets()
   }
@@ -64,7 +64,7 @@ export class PetController {
   @Roles(UserType.ADMIN)
   @Patch('remove-owner/:idPet')
   @ApiOperation({ summary: 'libera una mascota de un propietario' })
-  async removeFromOwner(@Req() req: any, @Param('idPet') idPet: number) {
+  async removeFromOwner(@Param('idPet') idPet: number) {
     return this.petService.removePetFromUser(idPet)
   }
 
