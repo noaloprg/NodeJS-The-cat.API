@@ -53,9 +53,4 @@ export class AuthController {
     return this.service.accept(dto)
   }
 
-  @Delete()
-  @ApiOperation({ summary: 'Metodo de prueba' })
-  async delete() {
-    return this.service.deleteAll()
-  }
 }

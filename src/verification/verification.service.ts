@@ -80,11 +80,4 @@ export class VerificationService {
   public async acceptRegistry(id: number) {
     this.repository.update(id, { acceptedAt: new Date() })
   }
-
-  //TESTING 
-  async deleteAllDebug() {
-    const all = await this.repository.find()
-
-    return (await this.repository.remove(all)).map(verif => this.mapper.toResponseDTO(verif))
-  }
 }

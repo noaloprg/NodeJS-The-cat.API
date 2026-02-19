@@ -72,7 +72,4 @@ export class AuthService {
         else throw new NotFoundException('token invalid')
     }
 
-    async deleteAll() {
-        return this.verificationService.deleteAllDebug()
-    }
 }
