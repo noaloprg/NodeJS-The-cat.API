@@ -3,6 +3,10 @@ import { TypeOrmModule } from "@nestjs/typeorm";
 import { seeder } from "nestjs-seeder";
 import { User } from "./users/entities/user.entity";
 import { UserSeeder } from "./users/entities/user.seeder";
+import { Pet } from "./pet/entities/pet.entity";
+import { Cat } from "./cat/entities/cat.entity";
+import { Breed } from "./breed/entities/breed.entity";
+import { Verification } from "./verification/entities/verification.entity";
 
 seeder({
     imports: [
@@ -21,7 +25,7 @@ seeder({
                 username: configService.get('POSTGRES_DOCKER_USER'),
                 password: configService.get('POSTGRES_DOCKER_ROOT_PASSWORD'),
                 database: `db_${configService.get('APP_NAME')}`,
-                entities: [User],
+                entities: [User, Pet, Cat, Breed, Verification],
                 synchronize: true
             }),
             inject: [ConfigService]
