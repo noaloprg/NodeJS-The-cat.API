@@ -1,12 +1,18 @@
 import { Injectable } from "@nestjs/common";
+import { Pet } from "src/pet/entities/pet.entity";
 import { CreateUserDto } from "src/users/dto/create-user.dto";
 import { ResponseUserDTO } from "src/users/dto/response-user.dto";
 import { UpdateUserDto } from "src/users/dto/update-user.dto";
 import { User } from "src/users/entities/user.entity";
 import { Verification } from "src/verification/entities/verification.entity";
+import { PetMapper } from "./pet.mapper";
+import { ResponseUserPetDTO } from "src/users/dto/response-user-pets.dto";
 
 @Injectable()
 export class UserMapper {
+
+    constructor(private readonly petMapper: PetMapper) { }
+
     createUserFromDTO(createDTO: CreateUserDto) {
         const user = new User()
         user.mail = createDTO.mail.toLocaleLowerCase().trim()
@@ -39,5 +45,12 @@ export class UserMapper {
         createDTO.password = verif.password
 
         return this.createUserFromDTO(createDTO)
+    }
+
+    toResponseUserPetDTO(user: User) {
+        const response = new ResponseUserPetDTO()
+        response.user = this.toResponseDTO(user)
+        response.pet = (user.pets || []).map(pet => this.petMapper.toResponseDTO(pet))
+        return response
     }
 }
