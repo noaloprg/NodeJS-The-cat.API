@@ -33,19 +33,6 @@ import { HttpModule } from '@nestjs/axios';
       }),
       inject: [ConfigService]
     }),
-
-    HttpModule.registerAsync({
-      imports: [ConfigModule],
-      inject: [ConfigService],
-      useFactory: (configService: ConfigService) => ({
-        baseURL: configService.get('BASE_URL'),
-        headers: {
-          'x-api-key': configService.get('CAT_API_KEY')
-        },
-      })
-    })
-    ,
-
     UsersModule,
 
     VerificationModule,

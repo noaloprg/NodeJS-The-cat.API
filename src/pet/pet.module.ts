@@ -12,9 +12,8 @@ import { UsersModule } from 'src/users/users.module';
     TypeOrmModule.forFeature([Pet]),
     CatModule,
     UsersModule,
-    PetMapper
   ],
   controllers: [PetController],
-  providers: [PetService],
+  providers: [PetService, PetMapper],
 })
 export class PetModule { }
