@@ -39,7 +39,7 @@ export class UsersService {
 
   async findAll() {
     const usersArray = await this.repository.find({
-      relations: ['pets']
+      relations: ['pets', 'pets.animalId']
     })
     return usersArray.map(user => this.userMapper.toResponseUserPetDTO(user))
   }
