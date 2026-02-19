@@ -22,17 +22,11 @@ export class UserMapper {
     }
 
     toResponseDTO(user: User) {
-        const response = new ResponseUserDTO()
-        response.id = user.id
-        response.mail = user.mail
-        response.name = user.name
-        response.role = user.role
-        response.language = user.language
-        response.createdAt = user.createdAt
-        response.updatedAt = user.updatedAt
-        response.deletedAt = user.deletedAt
+        let response = new ResponseUserDTO()
+        response = this.mapProperties(response, user)
         return response
     }
+
 
     updateUserFromDTO(user: User, updateDTO: UpdateUserDto): User {
         return Object.assign(user, updateDTO)
@@ -48,9 +42,22 @@ export class UserMapper {
     }
 
     toResponseUserPetDTO(user: User) {
-        const response = new ResponseUserPetDTO()
-        response.user = this.toResponseDTO(user)
+        let response = new ResponseUserPetDTO()
+        response = this.mapProperties(response, user)
         response.pets = (user.pets || []).map(pet => this.petMapper.toResponseDTO(pet))
+        return response
+    }
+
+    // * solo para response
+    private mapProperties(response: any, user: User) {
+        response.id = user.id
+        response.mail = user.mail
+        response.name = user.name
+        response.role = user.role
+        response.language = user.language
+        response.createdAt = user.createdAt
+        response.updatedAt = user.updatedAt
+        response.deletedAt = user.deletedAt
         return response
     }
 }
