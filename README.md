@@ -1,98 +1,60 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+# DLTCat
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+Desarrollo de una aplicación de gestión de entidades sencilla. El objetivo es permitir a los usuarios autenticados en la plataforma obtener datos de una API externa para poblar una BD y luego relacionar los datos con los usuarios.
 
-## Description
+## Tecnologías
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+NestJS, Typescript, Docker, conocimiento general SGBD, Swagger UI, servicios de AUTH, JWT
 
-## Project setup
+## Requisitos
 
-```bash
-$ npm install
-```
+La aplicación debe resolver los siguientes requisitos, divididos por roles. Los roles serán _usuario no registrado_, _usuario_ y _admin_.
 
-## Compile and run the project
+### Requisitos de usuario no registrado
 
-```bash
-# development
-$ npm run start
+- El _usuario no registrado_ podrá solicitar registro en la plataforma usando su correo electrónico.
+- El _usuario no registrado_ debe esperar a que un _administrador_ valide su cuenta.
 
-# watch mode
-$ npm run start:dev
+### Requisitos usuario
 
-# production mode
-$ npm run start:prod
-```
+- El _usuario_ podrá solicitar información de todos los gatos dentro de la base de datos.
+- El _usuario_ podrá asignar gatos de la base de datos como mascotas, asignando al gato un nombre.
+- El _usuario_ podrá liberar mascotas que tenga, estando disponibles para otros usuarios para que sean sus mascotas.
 
-## Run tests
+### Requisitos administrador
 
-```bash
-# unit tests
-$ npm run test
+- El _usuario administrador_ ya estará dentro de la base de datos al iniciar el programa (ver mas adelante _seeder_), no se puede registrar nuevos administradores.
+- El _usuario administrador_ puede validar o denegar nuevos registros de _usuarios no registrados_.
+- El _usuario administrador_ puede listar todos los usuarios, tanto que están esperando validación como que ya están registrados así como la información de mascotas que tiene cada uno.
+- El _usuario administrador_ podrá solicitar nuevos gatos.
+- El _usuario administrador_ podrá borrar registros de gatos.
+- El _usuario administrador_ podrá ver la información de todos los gatos y todas las razas.
+- El _usuario administrador_ podrá liberar mascotas de cualquier usuario, sean suyas o no.
 
-# e2e tests
-$ npm run test:e2e
+### Base de datos
 
-# test coverage
-$ npm run test:cov
-```
+Se puede usar cualquier SGBD, pero se debe hacer uso del ORM que dispone NestJS. Se adjunta un ejemplo de la base de datos.
 
-## Deployment
+No es necesario calcar la base de datos del ejemplo, pero se puede usar para orientarse. No hace falta disponer de la misma cantidad de tablas y/o datos en ellas siempre que el programa cumpla los requisitos dispuestos en la prueba.
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+### Requisitos de la base de datos
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+- Al solicitar nueva información de gatos a la API, el gato o gatos se guardarán en la BD. Se debe comprobar que la raza (breed) del gato existe, en caso de no existir, se debe guardar la raza.
+- Al solicitar información de los gatos desde el programa, se debe devolver también información de su raza.
+- El análisis de relaciones y gestión de tablas se debe realizar junto al diseño. Se valorará dicho diseño.
+- La base de datos debe estar en DOCKER.
 
-```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
-```
+### Requisitos de la aplicación
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+- La aplicación contará con un seeder que generará de forma automática un usuario con rol _administrador_ al iniciar el programa.
+- Todos los datos de entrada y de salida deben ir correctamente comprobados con diferentes DTO.
+- El programa estará completamente documentado en SWAGGER (las consultas, los parámetros y los DTO).
+- **(OPCIONAL):** CRUD general de usuario (cambiar datos de usuario)
+- **(OPCIONAL):** La aplicación estará en, al menos, dos idiomas.
+- **(OPCIONAL:)** Las razas disponen de diferentes valores _(child_friendly, dog_friendly, energy_level...)_. Se debe poder comparar una mascota con otra para ver los valores y así saber cual es, por ejemplo, más compatible con perros y/u otros valores definidos en el diseño.
 
-## Resources
+## Pruebas
 
-Check out a few resources that may come in handy when working with NestJS:
+Para la ejecución de la aplicación se usará **Swagger UI**. Todas las consultas se comprobarán desde allí, no hace falta generar ningún front más allá de dicha interfaz. Se debe dar acceso al evaluador a un repositorio privado con la prueba para ver el funcionamiento.
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
