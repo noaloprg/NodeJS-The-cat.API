@@ -1,5 +1,5 @@
 services:
-  postgres: 
+  postgres_DLTCat: 
     image: postgres:17.0-alpine3.20
     ports: 
       - "${POSTGRES_PORT_PC}:5432" 
