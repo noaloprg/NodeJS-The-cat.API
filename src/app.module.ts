@@ -9,7 +9,6 @@ import { AuthModule } from './auth/auth.module';
 import { PetModule } from './pet/pet.module';
 import { CatModule } from './cat/cat.module';
 import { BreedModule } from './breed/breed.module';
-import { HttpModule } from '@nestjs/axios';
 @Module({
   imports: [
     ConfigModule.forRoot({
