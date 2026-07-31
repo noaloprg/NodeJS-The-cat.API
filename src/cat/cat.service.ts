@@ -1,7 +1,6 @@
 import { BadRequestException, HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateCatDto } from './dto/create-cat.dto';
-import { HttpService } from '@nestjs/axios';
-import { firstValueFrom } from 'rxjs';
+import { ConfigService } from '@nestjs/config';
 import { CreateCatWithBreedDTO } from './dto/create-cat-breed.dto';
 import { BreedService } from 'src/breed/breed.service';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -20,7 +19,7 @@ export class CatService {
   private readonly repository: Repository<Cat>
 
   constructor(
-    private readonly httpService: HttpService,
+    private readonly configService: ConfigService,
     private readonly breedService: BreedService,
     private readonly mapper: CatMapper,
     private readonly breedMapper: BreedMapper
@@ -122,13 +121,26 @@ export class CatService {
   // amount -> num of cats admin requests
   private async getCatsFromApi(amount: number) {
     try {
-      /*
-      tranforms Observable into Promise<AxiosResponse> to access AxiosResponse methods
-      */
-      const apiReponse = await firstValueFrom(this.httpService.get('images/search', {
-        params: { limit: amount, has_breeds: 1 },
-      }))
-      return apiReponse.data;
+      // Base URL for API requests
+       const baseUrl = this.configService.get<string>('BASE_URL')!
+       // API key for CatAPI
+      const apiKey = this.configService.get<string>('CAT_API_KEY')
+
+      // specific URL
+      const url = new URL('images/search', baseUrl.endsWith('/') ? baseUrl : `${baseUrl}/`)
+      url.searchParams.set('limit', String(amount))
+      url.searchParams.set('has_breeds', '1')
+
+      // GET petition
+      const response = await fetch(url, {
+        headers: { 'x-api-key': apiKey ?? '' }
+      })
+
+      if (!response.ok) {
+        throw new HttpException(`Error al conectar con Cat API: ${response.statusText}`, response.status)
+      }
+
+      return await response.json()
     }
     catch (error) {
       const status = error?.status || HttpStatus.INTERNAL_SERVER_ERROR;
