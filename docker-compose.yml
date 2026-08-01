@@ -16,5 +16,7 @@ services:
     ports: 
     - "3000:3000" # Port of the image 
     restart: always # always restarts in case of errors 
+    env_file:
+      - .env #env for compilation
 volumes:
   dltcat_data:
