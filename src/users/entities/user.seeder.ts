@@ -7,19 +7,40 @@ import { UserType } from "../enums/User-role.enum";
 
 @Injectable()
 export class UserSeeder implements Seeder {
-    @InjectRepository(User)
-    private readonly UserRepository: Repository<User>
 
-    seed(): Promise<any> {
-        const admin = this.UserRepository.create({
-            mail: 'admin@admin.com',
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>
+
+    private readonly adminEmail = 'admin@admin.com'
+
+    // seeding method from Seeder class
+    async seed() {
+
+        // presence validation 
+        const adminExists = await this.userRepository.findOne({
+            where: { mail: this.adminEmail },
+        })
+
+        // it exists
+        if (adminExists != null) {
+            console.log("Administrador ya presente, no se realiza el seeding")
+            return
+        }
+
+        // it doesnt exists
+        const admin = this.userRepository.create({
+            mail: this.adminEmail,
             name: 'admin',
             password: 'admin1234',
             role: UserType.ADMIN,
-
         })
-        return this.UserRepository.save(admin)
+
+        await this.userRepository.save(admin)
+
+        console.log("Admin creado con correo: " + admin.mail)
+
     }
+
     drop(): Promise<any> {
         throw new Error('Method not implemented')
         //return this.UserRepository.query('TRUNCATE TABLE "user" RESTART IDENTITY CASCADE')
