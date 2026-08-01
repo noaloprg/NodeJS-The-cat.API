@@ -30,7 +30,7 @@ import { UserSeeder } from './users/entities/user.seeder';
         autoLoadEntities: true,
         //when changes in Entities are made, all tables are created as new
         // dropSchema:true,
-        synchronize: false
+        synchronize: true
       }),
       inject: [ConfigService],
     }),
