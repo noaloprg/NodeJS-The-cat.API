@@ -6,13 +6,14 @@ import { User } from './entities/user.entity';
 import { UserMapper } from 'src/common/mappers/user.mapper';
 import { PetMapper } from 'src/common/mappers/pet.mapper';
 import { Pet } from 'src/pet/entities/pet.entity';
+import { UserSeeder } from './entities/user.seeder';
 
 @Module({
   controllers: [UsersController],
-  providers: [UsersService, UserMapper, PetMapper],
+  providers: [UsersService, UserMapper, PetMapper, UserSeeder],
   imports: [
     TypeOrmModule.forFeature([User, Pet]),
   ],
-  exports: [UsersService]
+  exports: [UsersService, UserSeeder]
 })
 export class UsersModule { }

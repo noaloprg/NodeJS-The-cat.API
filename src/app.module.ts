@@ -9,11 +9,13 @@ import { AuthModule } from './auth/auth.module';
 import { PetModule } from './pet/pet.module';
 import { CatModule } from './cat/cat.module';
 import { BreedModule } from './breed/breed.module';
+import { AppInitializationService } from './app_init.service';
+import { UserSeeder } from './users/entities/user.seeder';
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: '.env', 
+      envFilePath: '.env',
     }),
 
     TypeOrmModule.forRootAsync({
@@ -28,9 +30,9 @@ import { BreedModule } from './breed/breed.module';
         autoLoadEntities: true,
         //when changes in Entities are made, all tables are created as new
         // dropSchema:true,
-        synchronize: true
+        synchronize: false
       }),
-      inject: [ConfigService]
+      inject: [ConfigService],
     }),
     UsersModule,
 
@@ -45,6 +47,6 @@ import { BreedModule } from './breed/breed.module';
     BreedModule
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, AppInitializationService],
 })
 export class AppModule { }
